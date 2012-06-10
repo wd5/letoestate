@@ -1,0 +1,73 @@
+msgid "Realestate"
+msgstr "Блок недвижимость"
+
+msgid "realestate"
+msgstr "блок недвижимость"
+
+msgid "сountries"
+msgstr "страны"
+
+msgid "сountry"
+msgstr "страна"
+
+msgid "regions"
+msgstr "регионы"
+
+msgid "region"
+msgstr "регион"
+
+msgid "rre_types"
+msgstr "типы жилой нежвижимости"
+
+msgid "rre_type"
+msgstr "тип"
+
+msgid "cre_types"
+msgstr "типы коммерческой нежвижимости"
+
+msgid "cre_type"
+msgstr "тип"
+
+msgid "rr_estates"
+msgstr "жилая нежвижимость"
+
+msgid "rr_estate"
+msgstr "запись"
+
+msgid "cr_estates"
+msgstr "коммерческая нежвижимость"
+
+msgid "cr_estate"
+msgstr "запись"
+
+msgid "rre_attached_photos"
+msgstr "дополнительные изображения"
+
+msgid "rre_attached_photo"
+msgstr "изображение"
+
+msgid "cre_attached_photos"
+msgstr "дополнительные изображения"
+
+msgid "cre_attached_photo"
+msgstr "изображение"
+
+msgid "parameter_types"
+msgstr "названия доп. параметров"
+
+msgid "parameter_type"
+msgstr "название"
+
+msgid "rre_additional_parameters"
+msgstr "дополнительные параметры"
+
+msgid "rre_additional_parameter"
+msgstr "параметр"
+
+msgid "cre_additional_parameters"
+msgstr "дополнительные параметры"
+
+msgid "cre_additional_parameter"
+msgstr "параметр"
+
+
