@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pages_extras pagination_tags %}
+
+{% if page.title %}
+    {% block title %}
+        Главная &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% get_menu_by_parent item.static_page request.path %}
+    {% block_aid_out %}
+    {% block_news_by_country item.id %}
+{% endblock %}
+
+{% block main_right %}
+    {% if item_type == 'residential' %}
+        <a href="{{ item.get_absolute_url }}catalog/residential/" class="catalog_lnk">Жилая недвижимость<img src="/media/images/flag1.png" alt="" class="flag" /></a>
+    {% endif %}
+    {% if item_type == 'commercial' %}
+        <a href="{{ item.get_absolute_url }}catalog/commercial/" class="catalog_lnk">Коммерческая недвижимость<img src="/media/images/flag1.png" alt="" class="flag" /></a>
+    {% endif %}
+    <h1>{{ catalog_item.title }}</h1>
+    <div class="item">
+        <div class="item_imgs">
+
+            <div class="item_img_zl">
+            {% thumbnail catalog_item.image "1000" upscale=0 as big %}
+                {% thumbnail catalog_item.image "276x206" crop="center" as im %}
+                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    <a href="{{ big.url }}" rel="{{ catalog_item.id }}" class="item_img_zl_fr fancybox"></a>
+                {% endthumbnail %}
+            {% endthumbnail %}
+            </div>
+
+            {% for photo in catalog_item.get_attached_photos %}
+                <div class="item_img_zs">
+                {% thumbnail photo.image "1000" upscale=0 as big %}
+                    {% thumbnail photo.image "117x86" crop="center" as im %}
+                    <img src="{{ im.url }}" alt="" />
+                    <a href="{{ big.url }}" rel="{{ catalog_item.id }}" class="item_img_zs_fr fancybox"></a>
+                    {% endthumbnail %}
+                {% endthumbnail %}
+                </div>
+            {% endfor %}
+
+        </div>
+        <div class="item_des">
+            <p>{{ catalog_item.description }}</p>
+            <div class="item_specs">
+                <div class="item_spec">
+                    <span class="item_spec_value">{{ catalog_item.region.title }}</span>
+                    <span class="item_spec_name">Населенный пункт</span>
+                </div>
+                <div class="item_spec">
+                    <span class="item_spec_value">{{ catalog_item.get_type_title }}</span>
+                    <span class="item_spec_name">Тип</span>
+                </div>
+                {% for parameter in catalog_item.get_parameters %}
+                <div class="item_spec">
+                    <span class="item_spec_value">{{ parameter.get_str_value }}</span>
+                    <span class="item_spec_name">{{ parameter.type.title }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="item_ad">
+                {{ catalog_item.add_parameter_info|safe }}
+                <div class="item_ad_price">{{ catalog_item.get_str_price }} EUR</div>
+                <div class="submit">
+                    <div><a href="/countries/send_request/{% if item_type == 'residential' %}residential{% else %}commercial{% endif %}/{{ catalog_item.id }}/" class="fancybox">Оставить заявку</a></div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /item -->
+{% endblock %}

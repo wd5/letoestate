@@ -39,10 +39,6 @@ class SettingsAdmin(admin.ModelAdmin):
 admin.site.register(Settings, SettingsAdmin)
 
 class NewsAdminForm(forms.ModelForm):
-    short_text = forms.CharField(
-        widget=Redactor(attrs={'cols': 170, 'rows': 10}),
-        label = u'Анонс',
-    )
     text = forms.CharField(
         widget=Redactor(attrs={'cols': 170, 'rows': 30}),
         label = u'Текст',
@@ -51,9 +47,9 @@ class NewsAdminForm(forms.ModelForm):
         model = News
 
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'country', 'date_add', 'is_published', 'on_main_page',)
+    list_display = ('title', 'country', 'date_add', 'is_published',)
     list_display_links = ('title',)
-    list_filter = ('is_published', 'on_main_page', )
+    list_filter = ('is_published', 'date_add', )
     form = NewsAdminForm
     date_hierarchy = 'date_add'
 

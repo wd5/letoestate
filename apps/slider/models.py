@@ -30,6 +30,9 @@ class SlideItem(models.Model):
     def __unicode__(self):
         return u'ID фото %s' %self.id
 
+    def get_absolute_url(self):
+        return self.url.strip()
+
     def admin_photo_preview(self):
         image = self.image
         if image:

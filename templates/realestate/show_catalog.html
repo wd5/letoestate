@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pages_extras pagination_tags %}
+
+{% if page.title %}
+    {% block title %}
+        Каталог недвижимости &mdash; {{ item.title }} &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% get_menu_by_parent item.static_page request.path %}
+    {% block_aid_out %}
+    {% block_news_by_country item.id %}
+{% endblock %}
+
+{% block main_right %}
+    {% if item_type == "residential" %}
+        <h1>Жилая недвижимость <img src="/media/images/flag1.png" alt="" class="flag" /><span> или <a href="{{ item.get_absolute_url }}catalog/commertial/" class="check_type">Коммерческая недвижимость</a></span></h1>
+    {% endif %}
+    {% if item_type == "commertial" %}
+        <h1><span><a href="{{ item.get_absolute_url }}catalog/residential/" class="check_type">Жилая недвижимость</a> или </span>Коммерческая недвижимость <img src="/media/images/flag1.png" alt="" class="flag" /> </h1>
+    {% endif %}
+
+    <div class="filters">
+        <div class="filter">
+            <span class="filter_curr"><a href="#" name="all" class="check_subtype">Все типы недвижимости</a></span>
+            {% for estate_type in estate_types %}
+                <span><a href="#" name="{{ estate_type.id }}" class="check_subtype">{{ estate_type.title }}</a></span>
+            {% endfor %}
+        </div>
+        <div class="filter">
+            <span class="filter_curr"><a href="#" name="all" class="check_region">Любой населенный пункт</a></span>
+            {% for region in regions %}
+                <span><a href="#" class="check_region" name="{{ region.id }}">{{ region.title }}</a></span>
+            {% endfor %}
+        </div>
+        <div class="filter_slider">
+            <div class="filter_name">Цена (EUR)</div>
+            <div class="filter_price_pl">
+                <div class="sort_price_slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+                    <div style="left: 0%;" class="slider_label_l">490</div>
+                    <div style="right: 0%;" class="slider_label_r">34500</div>
+                    <div class="ui-slider-range ui-widget-header" style="left: 25%; width: 50%; "></div>
+                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 25%; "></a>
+                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 75%; "></a>
+                </div>
+            </div>
+        </div>
+        <div class="filter_show_more"><a href="#">Дополнительные параметры</a></div>
+        <div class="filter_exts">
+            {% for add_parameter in additional_parameters %}
+                <div class="filter_ext">
+                    <div class="filter_name">{{ add_parameter.title }}</div>
+                    <div class="filter">
+                        <div class="filter_ ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+                            <div style="left: 0%;" class="slider_label_l">490</div>
+                            <div style="right: 0%;" class="slider_label_r">34500</div>
+                            <div class="ui-slider-range ui-widget-header" style="left: 25%; width: 50%; "></div>
+                            <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 25%; "></a>
+                            <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 75%; "></a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div><!-- /filters -->
+
+    <div class="catalog">
+        {% if catalog %}
+        {% autopaginate catalog 7 %}
+        {% for catalog_item in catalog %}
+            <div class="item">
+                <div class="item_img">
+                    {% thumbnail catalog_item.image "156x123" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    {% endthumbnail %}
+                    <a href="{{ catalog_item.get_absolute_url }}" class="item_img_fr"></a></div>
+                <div class="item_cat_des">
+                    <a href="{{ catalog_item.get_absolute_url }}" class="item_name_lnk">{{ catalog_item.title }}</a>
+                    <div class="item_price">{{ catalog_item.get_str_price }} EUR</div>
+                    <p>{{ catalog_item.description|truncatewords:33 }}</p>
+                </div>
+            </div>
+        {% endfor %}
+        {% paginate %}
+        {% endif %}
+    </div><!-- /catalog -->
+
+{% endblock %}

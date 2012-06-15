@@ -3,12 +3,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="description" content="{% block META_description %}{{ meta.description }}{% endblock %}"/>
-    <meta name="keywords" content="{% block META_keywords %}{{ meta.keywords }}{% endblock %}"/>
-    <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
-    <!--[if lte IE 8]><link rel="stylesheet" type="text/css" media="screen" href="/static/css/ie.css" /><![endif]-->
-    <script type="text/javascript" src="/static/js/jquery.js"></script>
-    <script type="text/javascript" src="/static/js/script.js"></script>
+    <link href="/media/css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lte IE 8]><link rel="stylesheet" type="text/css" /media="screen" href="/media/css/ie.css" /><![endif]-->
+    <script type="text/javascript" src="/media/js/jquery.js"></script>
+    <script type="text/javascript" src="/media/js/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+    <link rel="stylesheet" href="/media/js/fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/media/js/script.js"></script>
+    <script type="text/javascript" src="/media/js/jquery.cycle.lite.js"></script>
+    <!--[if IE 6]><script src="/media/js/DD_belatedPNG.js"></script><![endif]-->
     <title>
         {% block title %}
             {% if meta.title %}
@@ -22,6 +24,73 @@
 </head>
 
 <body>
-{% block_menu request.path %}
+<div class="wrapper">
+
+<!--PAGE-->
+<div class="page">
+
+    <!--HEADER-->
+	<div class="header">
+		<a id="logo_box" href="/" title="LetoEstate"><img id="logo" src="/media/img/logo.png" alt="LetoEstate" width="224" height="79" /></a>
+		<div class="des">Недвижимость за рубежом<br/>Сопровождение сделок с недвижимостью</div>
+
+		<div class="socs">
+			<a href="#" class="soc"><img src="/media/img/fb.png" alt="Fasebook" /></a>
+			<a href="#" class="soc"><img src="/media/img/in.png" alt="LinkedIn" /></a>
+			<a href="#" class="soc"><img src="/media/img/vk.png" alt="Вконтакте" /></a>
+			<a href="#" class="soc"><img src="/media/img/tw.png" alt="Twitter" /></a>
+		</div><!-- /socs -->
+
+		<div class="contacts">
+			<div class="tel">{{ tel }}</div>
+		</div><!--/contacts-->
+
+		<div class="pic">
+			<img src="/media/img/pic1.png">
+			<div class="pic_fr"></div>
+		</div><!-- /pic -->
+
+		<div class="menu">
+			<ul>
+                {% block_menu request.path %}
+			</ul>
+		</div><!--/menu-->
+	</div>
+    <!--/HEADER-->
+
+
+    <!--MAIN-->
+	<div class="main">
+		<div class="left">
+            {% block main_left %}
+            {% endblock %}
+		</div><!--/left-->
+
+		<div class="right">
+            {% block main_right %}
+            {% endblock %}
+		</div><!--/right-->
+		<div class="main_b"></div>
+	</div>
+    <!--/MAIN-->
+
+
+    <!--FOOTER-->
+    <div class="footer">
+		<div id="copyright"><div class="logo_min"><img src="/media/img/logo_min.png" alt="LetoEstate" /></div>© 2011-{% now "Y" %} LetoEstate</div>
+		<div class="footer_menu">
+			<ul>
+                {% block_bottom_menu %}
+			</ul>
+		</div><!-- /footer_menu -->
+		<div class="site_map"><a href="news/rss/" class="rss"><img src="/media/img/rss.png" alt="rss" /></a><a href="/site_map/" class="site_map_lnk">Карта сайта</a></div>
+		<a id="madein" title="Разработка сайта — студия OctoberWeb" href="http://octoberweb.ru/"><img id="octoberweb" alt="Разработка сайта — студия OctoberWeb" src="/media/img/octoberweb.png" />Сайт разработан<br/>в <span>«Octoberweb»</span></a>
+    </div>
+    <!--/FOOTER-->
+
+</div>
+<!--/PAGE-->
+
+</div><!--/wrapper-->
 </body>
 </html>

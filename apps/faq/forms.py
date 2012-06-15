@@ -6,7 +6,6 @@ class QuestionForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.TextInput(
             attrs={
-                'required':'required',
                 'placeholder':'E-mail'
             }
         ),
@@ -15,7 +14,6 @@ class QuestionForm(forms.ModelForm):
     name = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                'required':'required',
                 'placeholder':'Имя'
             }
         ),
@@ -24,8 +22,7 @@ class QuestionForm(forms.ModelForm):
     question = forms.CharField(
         widget=forms.Textarea(
             attrs={
-                'required':'required',
-                'placeholder':'Вопрос'
+                'placeholder':'Текст вопроса'
             }
         ),
         required=True

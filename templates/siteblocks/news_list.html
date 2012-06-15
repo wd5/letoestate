@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pagination_tags %}
+
+{% if page.title %}
+    {% block title %}
+        {% if item %}{{ item.title }} &mdash; {% endif %} Новости &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% block_aid_out %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="blk_news">
+        <div class="news">
+            <h1>Новости</h1>
+            {% autopaginate news 7 %}
+                {% for new in news %}
+                    <div class="new">
+                        <div class="new_date">{{ new.date_add|date:"j E" }}</div>
+                        <div class="new_date">
+                            <a href="{% if item %}{{ item.get_absolute_url }}{% else %}/{% endif %}news/{{ new.id }}/">{{ new.title }}</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    Новотей пока нет.
+                {% endfor %}
+            {% paginate %}
+        </div>
+    </div><!--/blk_news-->
+{% endblock %}

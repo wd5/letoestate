@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras %}
+
+{% block main_left %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="faqs">
+        <h1>Вопрос-ответ</h1>
+        {% for question in questions %}
+            <div class="faq">
+                <div class="question">
+                    <div class="faq_author"><span class="faq_data">{{ question.pub_date|date:"j E" }}</span> <span class="faq_author_name">{{ question.name }}</span></div>
+                    <div class="question_text">{{ question.question }}</div>
+                </div>
+                {% if question.answer %}
+                    <div class="answer">
+                        <div class="faq_author"><span class="faq_data">{{ question.ans_date|date:"j E" }}</span> <span class="faq_author_name">{{ question.author }}</span></div>
+                        <div class="answer_text">{{ question.answer }}</div>
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            Вопросов пока нет.
+        {% endfor %}
+    </div>
+{% endblock %}

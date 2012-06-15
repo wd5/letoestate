@@ -1,0 +1,8 @@
+<li {% if current == '/about/' %}class="current"{% endif %}><a href="/about/">О нас</a></li>
+{% for item in menu %}
+    <li {% if current == item.get_absolute_url %}class="current"{% endif %}><a href="{{ item.get_absolute_url }}"><img src="{{ item.get_src_image }}" alt="{{ item.title }}" class="flag" />{{ item.title }}</a></li>
+{% endfor %}
+<li {% if current == '/exclusive/' %}class="current"{% endif %}><a href="/exclusive/"><img src="/media/images/flag1.png" alt="Эксклюзив" class="flag" />Эксклюзив</a></li>
+<li {% if current == '/analytics/' %}class="current"{% endif %}><a href="/analytics/">Аналитика</a></li>
+<li {% if current == '/faq/' %}class="current"{% endif %}><a href="/faq/">Вопрос ответ</a></li>
+<li {% if current == '/contacts/' %}class="current"{% endif %}><a href="/contacts/">Контакты</a></li>

@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django import forms
 from apps.utils.widgets import Redactor, AdminImageWidget
-from models import Country, RE_Region, RRE_Type, CRE_Type, ResidentialRealEstate, CommercialRealEstate, CRE_Attached_photo, RRE_Attached_photo, RRE_AdditionalParameter, CRE_AdditionalParameter, ParameterType
+from models import Country, RE_Region, RRE_Type, CRE_Type, ResidentialRealEstate, CommercialRealEstate, CRE_Attached_photo, RRE_Attached_photo, RRE_AdditionalParameter, CRE_AdditionalParameter, ParameterType, Request
 from sorl.thumbnail.admin import AdminImageMixin
 
 class CountryAdminForm(forms.ModelForm):
@@ -22,6 +22,7 @@ class CountryAdmin(AdminImageMixin, admin.ModelAdmin):
     list_editable = ('order', 'is_published',)
     search_fields = ('title',)
     list_filter = ('is_published',)
+    exclude = ('static_page',)
     form = CountryAdminForm
 
 class RE_RegionAdmin(admin.ModelAdmin):
@@ -53,11 +54,19 @@ class RREstateAdminForm(forms.ModelForm):
     class Meta:
         model = ResidentialRealEstate
 
+    class Media:
+        js = (
+            '/media/js/jquery.js',
+            '/media/js/clientadmin.js',
+            '/media/js/jquery.synctranslit.js',
+            )
+
 class RR_AttachedPhotoInline(AdminImageMixin,admin.TabularInline):
     model = RRE_Attached_photo
 
 class RR_AddParamInline(AdminImageMixin,admin.TabularInline):
     model = RRE_AdditionalParameter
+    extra = 0
 
 class ResidentialRealEstateAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('id', 'title', 'slug', 'price', 'order', 'is_published',)
@@ -84,6 +93,7 @@ class CR_AttachedPhotoInline(AdminImageMixin,admin.TabularInline):
 
 class CR_AddParamInline(AdminImageMixin,admin.TabularInline):
     model = CRE_AdditionalParameter
+    extra = 0
 
 class CommercialRealEstateAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('id', 'title', 'slug', 'price', 'order', 'is_published',)
@@ -104,6 +114,22 @@ class ParameterTypeAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('is_published',)
 
+class RequestAdminForm(forms.ModelForm):
+    url = forms.CharField(
+        #widget=forms.URLField(),
+        label = u'Ссылка на объект',
+    )
+    class Meta:
+        model = Request
+
+class RequestAdmin(admin.ModelAdmin):
+    list_display = ('id','date_create','name','a_url',)
+    list_display_links =  ('id','date_create','name',)
+    search_fields = ('name','contacts', 'note', 'url',)
+    form = RequestAdminForm
+    list_filter = ('date_create',)
+
+admin.site.register(Request, RequestAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(RE_Region, RE_RegionAdmin)
 admin.site.register(ParameterType, ParameterTypeAdmin)

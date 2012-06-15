@@ -1,23 +1,46 @@
 {% extends "base.html" %}
 
-{% load thumbnail %}
+{% load thumbnail faq_extras siteblocks_extras %}
 
 {% if page.title %}
     {% block title %}
-        {{ page.title }} &mdash;
+        Главная &mdash;
     {% endblock %}
 {% endif %}
 
-{% block center %}
-    <div class="text text_page">
-        {% if page.image %}
-            <p>
-                {% thumbnail page.image "374x252" as  small %}
-                    <img src="{{ small.url }}" width="{{ small.x }}" height="{{ small.y }}" alt="" />
-                {% endthumbnail %}
-            </p>
-        {% endif %}
-        {{ page.content|safe }}
-    </div>
+{% block main_left %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
 {% endblock %}
 
+{% block main_right %}
+    <div class="about_us">
+        <div class="about_us_in">
+            <p>{{ main_text }}</p>
+            <a href="/experts/">Cотрудники LetoEstate</a>
+        </div>
+    </div><!-- /about_us -->
+    {{ description_text|safe }}
+    {% if specs %}
+        <div class="specs">
+            <ul>
+            {% for slide in specs %}
+                <li>
+                    {% thumbnail slide.image "680x307" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    {% endthumbnail %}
+                    <div class="specs_fr"></div>
+                    <div class="spec_des">
+                        <a href="{{ slide.get_absolute_url }}" >{{ slide.title }}</a>
+                        <p>{{ slide.description }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+            <div class="specs_ctrls">Наши специальные предложения <img src="/media/images/flag1.png" alt="" /> <span></span><span></span><span></span><span></span></div>
+        </div><!-- /specs -->
+    {% endif %}
+    <div class="main_text">
+    {{ seo_text|safe }}
+    </div>
+{% endblock %}

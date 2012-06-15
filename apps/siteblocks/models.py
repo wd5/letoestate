@@ -29,13 +29,16 @@ class BottomSiteMenu(models.Model):
     def __unicode__(self):
         return self.title
 
-def strip_url_title(sender, instance, created, **kwargs):
-    # remove the first and the last space
-    instance.title = instance.title.strip()
-    instance.url = instance.url.strip()
-    instance.save()
+    def get_absolute_url(self):
+        return self.url.strip()
 
-post_save.connect(strip_url_title, sender=BottomSiteMenu)
+#def strip_url_title(sender, instance, created, **kwargs):
+#    # remove the first and the last space
+#    instance.title = instance.title.strip()
+#    instance.url = instance.url.strip()
+#    instance.save()
+#
+#post_save.connect(strip_url_title, sender=BottomSiteMenu)
 
 type_choices = (
     (u'input',u'input'),
@@ -81,15 +84,8 @@ class News(models.Model):
         upload_to = file_path_News,
         blank = True,
     )
-    short_text = models.TextField(
-        verbose_name = u'Анонс',
-    )
     text = models.TextField(
         verbose_name = u'Текст',
-    )
-    on_main_page = models.BooleanField(
-        verbose_name = u'Показывать на главной',
-        default = True,
     )
     is_published = models.BooleanField(
         verbose_name = u'Опубликовано',
@@ -110,4 +106,8 @@ class News(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return u'/news/%s/' % self.id
+
 

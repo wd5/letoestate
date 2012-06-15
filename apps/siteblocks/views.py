@@ -15,8 +15,8 @@ class NewsListView(ListView):
     context_object_name = 'news'
     queryset = model.objects.published()
 
-    def get_categories_list(self, **kwargs):
-        return NewsCategory.objects.all()
+#    def get_categories_list(self, **kwargs):
+#        return NewsCategory.objects.all()
 
 #    def get_queryset(self):
 #        from django.db.models import Q
@@ -34,7 +34,7 @@ class NewsListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(NewsListView, self).get_context_data(**kwargs)
-        context['categories_list'] = self.get_categories_list()
+        #context['categories_list'] = self.get_categories_list()
         context['current_date'] = self.request.GET.get('date', None)
         return context
 
@@ -45,12 +45,7 @@ class NewsDetailView(DetailView):
     context_object_name = 'news_current'
     model = News
     queryset = model.objects.published()
-    template_name = 'newsboard/detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(NewsDetailView, self).get_context_data(**kwargs)
-        context['categories_list'] = NewsListView.get_categories_list()
-        return context
+    template_name = 'siteblocks/new_detail.html'
 
     def get_object(self, queryset=None):
         queryset = self.get_queryset()
@@ -70,8 +65,6 @@ class NewsDetailView(DetailView):
 
 news_detail = NewsDetailView.as_view()
 
-
-
 class LatestNewsFeed(Feed):
     title = u'Новости'
     link = '/news/'
@@ -84,4 +77,4 @@ class LatestNewsFeed(Feed):
         return item.title
 
     def item_description(self, item):
-        return item.short_text
+        return u'%s...' % item.text[:350]

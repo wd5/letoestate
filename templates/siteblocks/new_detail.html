@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pagination_tags %}
+
+{% if page.title %}
+    {% block title %}
+        {{ news_current.title }} &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% block_aid_out %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="text">
+        <a href="{% if item %}{{ item.get_absolute_url }}{% else %}/{% endif %}news/">все новости</a> / <h1>{{ news_current.title }}</h1>
+        {{ news_current.date_add|date:"j E Y"}}
+        {{ news_current.text|safe }}
+    </div>
+{% endblock %}

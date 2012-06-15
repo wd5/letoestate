@@ -1,0 +1,56 @@
+@charset "utf-8";
+
+* html #m {
+	position: absolute;
+	top: -1em;
+	left: 0;
+	visibility: hidden;
+	width: 100%;
+	height: 1em;
+	line-height: 1em;
+}
+* html .wrapper {
+	height: 100%;
+	width: expression(
+	(
+		document.getElementById('m')
+		&& document.getElementById('m').clientWidth < 976
+	)
+	?	'976px'
+	:	(
+			document.getElementById('m')
+			&& document.getElementById('m').clientWidth < 1250
+		)
+		?	'100%'
+		:	'1250px'
+	);
+}
+
+
+
+/*6-7*/
+.left, .right, .search_form div, .menu li, .menu ul, .sotr_name, .catalog_lnk, .item_imgs, .item_img_zs,
+.item_des, .item_spec_name, .item_spec_value, .item_ad_price, .item_img, .item_cat_des, .item_price, 
+.filter_name, .filter_price_pl, .sort_price_rub, .filter_ext, .footer_menu li, .input label, 
+.input input, .textarea label, .textarea textarea, .form_search div, .submit, .submit div {
+	*display:inline;
+	*zoom:1;
+}
+.some {
+	*position:relative;
+	*zoom:1;
+}
+.search_form .submit input {
+	*overflow: visible;
+}
+.filter span {
+	*padding: 5px 10px 0;
+	*height: 17px;
+}
+/*6-7*/
+
+
+
+/*6*/
+/*6*/
+

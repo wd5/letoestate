@@ -192,6 +192,11 @@ msgstr "дополнительные параметры"
 msgid "cre_additional_parameter"
 msgstr "параметр"
 
+msgid "requests"
+msgstr "заявки"
+
+msgid "request"
+msgstr "заявка"
 
 
 #: apps/siteblocks/__init__.py:2

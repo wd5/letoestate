@@ -4,11 +4,11 @@ from settings import SITE_NAME
 
 def settings(request):
     try:
-        contacts = Settings.objects.get(name='contacts_block').value
+        contacts = Settings.objects.get(name='tel').value
     except Settings.DoesNotExist:
         contacts = False
 
     return {
-        'contacts': contacts,
+        'tel': contacts,
         'site_name': SITE_NAME,
     }

@@ -1,14 +1,23 @@
 {% if news %}
-    <div class="news">
-        <div class="new new_main">{{ news.0.text|safe }}</div>
+    <div class="blk_news">
+        <h2>Новости</h2>
+        {% if curr_country %}
         {% for new in news %}
-            {% if not forloop.first %}
-                <div class="new">
-                    <div class="new_date">{{ new.date_create|date:"j E" }}</div>
-                    <div class="new_text">{{ new.text|safe }}</div>
-                </div>
-            {% endif %}
+            <div class="blk_new">
+                <div class="blk_new_date">{{ new.date_add|date:"j E" }}</div>
+                <div class="blk_new_short"><a href="{{ curr_country.get_absolute_url }}news/{{ new.id }}/">{{ new.title }}</a></div>
+            </div>
         {% endfor %}
-        <div class="news_b"></div>
-    </div><!--/news-->
+            <div class="all"><a href="{{ curr_country.get_absolute_url }}news/">все новости</a></div>
+        {% else %}
+            {% for new in news %}
+               <div class="blk_new">
+                   <div class="blk_new_date">{{ new.date_add|date:"j E" }}</div>
+                   <div class="blk_new_short"><a href="/news/{{ new.id }}/">{{ new.title }}</a></div>
+               </div>
+            {% endfor %}
+            <div class="all"><a href="/news/">все новости</a></div>
+        {% endif %}
+    </div><!--/blk_news-->
 {% endif %}
+

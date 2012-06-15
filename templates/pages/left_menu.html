@@ -1,0 +1,7 @@
+<div class="blk_menu">
+    <ul>
+    {% for child_page in child_pages %}
+        <li {% if current == child_page.get_absolute_url %}class="blk_menu_curr"{% endif %} ><a href="{{ child_page.get_absolute_url }}">{{ child_page.title }}</a></li>
+    {% endfor %}
+    </ul>
+</div><!-- /blk_menu -->

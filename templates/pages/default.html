@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail siteblocks_extras %}
+{% load thumbnail faq_extras siteblocks_extras pages_extras %}
 
 {% if page.title %}
     {% block title %}
@@ -8,8 +8,20 @@
     {% endblock %}
 {% endif %}
 
-{% block center %}
-    <div class="text text_page">
+{% block main_left %}
+    {% if page.parent %}
+        {% get_menu_by_parent page.parent request.path %}
+    {% endif %}
+    {% block_aid_out %}
+    {% if page.parent %}
+        {% block_news_by_country page.parent.country.id %}
+    {% else %}
+        {% block_news_by_country '' %}
+    {% endif %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="text">
         <h1>{{ page.title }}</h1>
         {{ page.content|safe }}
     </div>

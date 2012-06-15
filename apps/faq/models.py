@@ -30,7 +30,7 @@ class QuestionCategory(models.Model):
         return self.title
 
 class Question(models.Model):
-    category = models.ForeignKey(QuestionCategory, verbose_name=u'Категория', default=1)
+    #category = models.ForeignKey(QuestionCategory, verbose_name=u'Категория', default=1)
     pub_date = models.DateTimeField(verbose_name = u'Дата', default=datetime.datetime.now)
     name = models.CharField(max_length = 150, verbose_name = u'Имя')
     email = models.CharField(verbose_name=u'E-mail',max_length=75)
@@ -60,16 +60,21 @@ class Expert(models.Model):
     image = ImageField(verbose_name=u'фотография', upload_to=file_path_expert_photo)
     description = models.TextField(verbose_name=u'текст о специалисте',)
     is_published = models.BooleanField(verbose_name = u'опубликовано', default=True)
+    order = models.IntegerField(u'порядок сортировки', help_text=u'Чем больше число, тем выше располагается элемент', default=10)
 
     # Managers
     objects = PublishedManager()
 
     class Meta:
+        ordering = ['-order']
         verbose_name = _(u'expert')
         verbose_name_plural = _(u'experts')
 
     def __unicode__(self):
         return self.full_name
+
+    def get_src_image(self):
+        return self.image.url
 
 
 

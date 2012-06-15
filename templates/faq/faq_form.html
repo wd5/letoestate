@@ -1,0 +1,10 @@
+<div class="form">
+    <form action="" class="form_faq" method="post">
+        <span class="form_caption">Задайте свой вопрос</span>
+        <div class="input"><label>Имя</label>{{ form.name }}{{ form.name.errors }}</div>
+        <div class="input"><label>E-mail</label>{{ form.email }}{{ form.email.errors }}</div>
+        <div class="textarea"><label>Текст вопроса</label>{{ form.question }}{{ form.question.errors }}</div>
+        <div class="submit"><div><input type="button" value="Отправить" id="send_question" /></div></div>
+    </form>
+</div>
+

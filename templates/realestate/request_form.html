@@ -1,0 +1,11 @@
+<div class="form">
+    <form action="" class="form_faq" method="post">
+        <span class="form_caption">Заполните заявку</span>
+        <div class="input"><label>Ф.И.О.</label>{{ form.name }}{{ form.name.errors }}</div>
+        <div class="input"><label>Контактные данные</label>{{ form.contacts }}{{ form.contacts.errors }}</div>
+        <div class="textarea"><label>Примечание</label>{{ form.note }}{{ form.note.errors }}</div>
+        <div style="display: none;">{{ form.url }}</div>
+        <div class="submit"><div><input type="button" value="Отправить" id="send_request" /></div></div>
+    </form>
+</div>
+
