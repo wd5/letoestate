@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras %}
+
+{% block main_left %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="experts">
+        <h1>Сотрудники LetoEstate</h1>
+        {% for expert in experts %}
+            <div class="expert">
+                <div class="img">
+                    {% thumbnail expert.image "88x110" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    {% endthumbnail %}
+                </div>
+                <div class="descr">
+                    <span class="name">{{ expert.full_name }}</span>
+                    <span class="description">{{ expert.description }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -55,15 +55,80 @@ $(function () {
     });
 
     $('.check_subtype').live('click',function(){
-        alert($(this).attr('name'));
-        alert($(this).parent().parent().parent().find('.filter_curr>.check_region').attr('name'));
+        var type = $('#re_type').val()
+        var subtype = $(this).attr('name')
+        var region = $(this).parent().parent().parent().find('.filter_curr>.check_region').attr('name')
+        LoadCatalog(type, subtype, region);
     });
 
     $('.check_region').live('click',function(){
-        alert($(this).attr('name'));
-        alert($(this).parent().parent().parent().find('.filter_curr>.check_subtype').attr('name'));
+        var type = $('#re_type').val()
+        var region = $(this).attr('name')
+        var subtype = $(this).parent().parent().parent().find('.filter_curr>.check_subtype').attr('name')
+        LoadCatalog(type, subtype, region);
     });
 
-
-
 });
+
+function SetPriceSlider(start, end, step, disabl)
+{
+    var price_label_l = $('.filter_price_pl').find('.slider_label_l')
+    var price_label_r = $('.filter_price_pl').find('.slider_label_r')
+
+    $('#price_slider').slider({
+        disabled: disabl,
+        range: true,
+        step: parseInt(step),
+        min: parseInt(start),
+        max: parseInt(end),
+        values:[parseInt(start),parseInt(end)],
+        change: function(event, ui) {
+            vals = $(this).slider( "option", "values" )
+            price_label_l.html(vals[0]);
+            price_label_r.html(vals[1]);
+        }
+    });
+}
+
+function LoadCatalog(type, subtype, region)
+{
+    $.ajax({
+        url: "/countries/load_catalog/",
+        data: {
+            type:type,
+            subtype:subtype,
+            region:region
+        },
+        type: "POST",
+        success: function(data) {
+            $('.catalog').replaceWith(data);
+            var minp = $('#min_price').val()
+            var maxp = $('#max_price').val()
+            var price_label_l = $('.filter_price_pl').find('.slider_label_l')
+            var price_label_r = $('.filter_price_pl').find('.slider_label_r')
+
+            if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
+                {
+                    if (minp==maxp)
+                        {SetPriceSlider(0,maxp,1,true);
+                        price_label_r.html(maxp);}
+                    else
+                        {SetPriceSlider(0,100,1,true);
+                        price_label_r.html(100);}
+                    price_label_l.html(0);
+                }
+            else
+                {
+                    len = maxp - minp
+                    stp = len/10
+                    SetPriceSlider(minp,maxp,stp,false);
+                    price_label_l.html(minp);
+                    price_label_r.html(maxp);
+                }
+
+        },
+        error:function(jqXHR,textStatus,errorThrown) {
+            $('.catalog').replaceWith(jqXHR.responseText);
+        }
+    });
+}

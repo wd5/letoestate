@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail faq_extras siteblocks_extras pagination_tags %}
+{% load thumbnail faq_extras siteblocks_extras pages_extras pagination_tags %}
 
 {% if page.title %}
     {% block title %}
@@ -9,6 +9,7 @@
 {% endif %}
 
 {% block main_left %}
+    {% if item %}{% get_menu_by_parent item.static_page request.path %}{% endif %}
     {% block_aid_out %}
 {% endblock %}
 
@@ -20,7 +21,7 @@
                 {% for new in news %}
                     <div class="new">
                         <div class="new_date">{{ new.date_add|date:"j E" }}</div>
-                        <div class="new_date">
+                        <div class="new_lnk">
                             <a href="{% if item %}{{ item.get_absolute_url }}{% else %}/{% endif %}news/{{ new.id }}/">{{ new.title }}</a>
                         </div>
                     </div>

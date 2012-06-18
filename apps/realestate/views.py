@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime, settings
+from django.db.models import Max, Min
 from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpResponseBadRequest, HttpResponsePermanentRedirect
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView, FormView, DetailView, ListView, RedirectView, View
@@ -20,18 +21,27 @@ class ShowCatalogView(DetailView):
         context['additional_parameters'] = ParameterType.objects.published()
         item_type = self.kwargs.get('type', 'residential')
         context['item_type'] = item_type
-        if item_type=='residential':
+        if item_type == 'residential':
             context['catalog'] = self.object.get_rre_catalog()
             context['estate_types'] = RRE_Type.objects.published()
             item_slug = self.kwargs.get('item', None)
             if item_slug:
                 context['catalog_item'] = ResidentialRealEstate.objects.get(slug=item_slug)
-        if item_type=='commertial':
+        if item_type == 'commertial':
             context['catalog'] = self.object.get_cre_catalog()
             context['estate_types'] = CRE_Type.objects.published()
             item_slug = self.kwargs.get('item', None)
             if item_slug:
                 context['catalog_item'] = CommercialRealEstate.objects.get(slug=item_slug)
+        dic = context['catalog'].aggregate(Min('price'), Max('price'))
+        context['max_price'] = dic['price__max']
+        context['min_price'] = dic['price__min']
+        try:
+            len = context['max_price'] - context['min_price']
+            context['step'] = len / 10
+        except TypeError:
+            context['step'] = False
+
         return context
 
 show_residential_catalog = ShowCatalogView.as_view()
@@ -109,12 +119,12 @@ class RequestFormView(FormView):
             type = self.kwargs['type']
         except KeyError:
             return HttpResponseBadRequest()
-        if type=='residential':
+        if type == 'residential':
             try:
                 catalog_item = ResidentialRealEstate.objects.get(id=pk)
             except ResidentialRealEstate.DoesNotExist:
                 return HttpResponseBadRequest()
-        if type=='commercial':
+        if type == 'commercial':
             try:
                 catalog_item = CommercialRealEstate.objects.get(id=pk)
             except ResidentialRealEstate.DoesNotExist:
@@ -124,7 +134,7 @@ class RequestFormView(FormView):
 
         kwargs.update({
             'initial': initial,
-        })
+            })
         return kwargs
 
 send_request = RequestFormView.as_view()
@@ -140,9 +150,9 @@ class SaveRequestView(View):
                 subject = u''.join(subject.splitlines())
                 message = render_to_string(
                     'realestate/message_template.html',
-                    {
-                        'saved_object':saved_object,
-                    }
+                        {
+                        'saved_object': saved_object,
+                        }
                 )
                 try:
                     emailto = Settings.objects.get(name='workemail').value
@@ -150,7 +160,7 @@ class SaveRequestView(View):
                     emailto = False
 
                 if emailto:
-                    msg = EmailMessage(subject, message, settings.DEFAULT_FROM_EMAIL,[emailto])
+                    msg = EmailMessage(subject, message, settings.DEFAULT_FROM_EMAIL, [emailto])
                     msg.content_subtype = "html"
                     msg.send()
 
@@ -158,8 +168,91 @@ class SaveRequestView(View):
             else:
                 form_html = render_to_string(
                     'realestate/request_form.html',
-                        {'form': form,}
+                        {'form': form, }
                 )
                 return HttpResponse(form_html)
+        else:
+            return HttpResponseBadRequest()
 
 save_request = SaveRequestView.as_view()
+
+class LoadCatalogView(View):
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            if 'type' not in request.POST or 'subtype' not in request.POST or 'region' not in request.POST:
+                return HttpResponseBadRequest()
+
+            type = request.POST['type']
+            subtype = request.POST['subtype']
+            region = request.POST['region']
+
+            if type == "residential":
+                queryset = ResidentialRealEstate.objects.published()
+                if subtype == "all":
+                    if region == "all":
+                        pass
+                    else:
+                        try:
+                            region = int(region)
+                        except ValueError:
+                            return HttpResponseBadRequest()
+                        queryset = queryset.filter(region=region)
+                else:
+                    try:
+                        subtype = int(subtype)
+                    except ValueError:
+                        return HttpResponseBadRequest()
+                    if region == "all":
+                        queryset = queryset.filter(rre_type=subtype)
+                    else:
+                        try:
+                            region = int(region)
+                        except ValueError:
+                            return HttpResponseBadRequest()
+                        queryset = queryset.filter(rre_type=subtype).filter(region=region)
+            elif type == "commertial":
+                queryset = CommercialRealEstate.objects.published()
+                if subtype == "all":
+                    if region == "all":
+                        pass
+                    else:
+                        try:
+                            region = int(region)
+                        except ValueError:
+                            return HttpResponseBadRequest()
+                        queryset = queryset.filter(region=region)
+                else:
+                    try:
+                        subtype = int(subtype)
+                    except ValueError:
+                        return HttpResponseBadRequest()
+                    if region == "all":
+                        queryset = queryset.filter(rre_type=subtype)
+                    else:
+                        try:
+                            region = int(region)
+                        except ValueError:
+                            return HttpResponseBadRequest()
+                        queryset = queryset.filter(rre_type=subtype).filter(region=region)
+            else:
+                return HttpResponseBadRequest('Произошла ошибка. Приносим извинения.')
+
+            dic = queryset.aggregate(Min('price'), Max('price'))
+            max_price = dic['price__max']
+            min_price = dic['price__min']
+            try:
+                len = max_price - min_price
+                step = len / 10
+            except TypeError:
+                step = False
+
+            items_html = render_to_string(
+                'realestate/catalog_template.html',
+                    {'catalog': queryset, 'request': request, 'region': region, 'subtype': subtype,
+                     'max_price': max_price, 'min_price': min_price, 'step': step}
+            )
+            return HttpResponse(items_html)
+        else:
+            return HttpResponseBadRequest()
+
+load_catalog = LoadCatalogView.as_view()

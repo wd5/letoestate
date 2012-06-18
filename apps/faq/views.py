@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView,FormView,DetailView, ListView
 
 from forms import QuestionForm
-from models import Question#,QuestionCategory
+from models import Question,Expert#,QuestionCategory
 
 class QuestionListView(ListView):
     model = Question
@@ -53,3 +53,11 @@ def SaveQuestionForm(request):
             return HttpResponse(faq_form_html)
     else:
         return HttpResponseBadRequest()
+
+class ExpertListView(ListView):
+    model = Expert
+    template_name = 'faq/experts.html'
+    context_object_name = 'experts'
+    queryset = model.objects.published()
+
+experts = ExpertListView.as_view()

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail faq_extras siteblocks_extras pages_extras pagination_tags %}
+{% load thumbnail faq_extras siteblocks_extras pages_extras %}
 
 {% if page.title %}
     {% block title %}
@@ -17,9 +17,11 @@
 {% block main_right %}
     {% if item_type == "residential" %}
         <h1>Жилая недвижимость <img src="/media/images/flag1.png" alt="" class="flag" /><span> или <a href="{{ item.get_absolute_url }}catalog/commertial/" class="check_type">Коммерческая недвижимость</a></span></h1>
+        <input type="hidden" value="residential" id="re_type">
     {% endif %}
     {% if item_type == "commertial" %}
         <h1><span><a href="{{ item.get_absolute_url }}catalog/residential/" class="check_type">Жилая недвижимость</a> или </span>Коммерческая недвижимость <img src="/media/images/flag1.png" alt="" class="flag" /> </h1>
+        <input type="hidden" value="commertial" id="re_type">
     {% endif %}
 
     <div class="filters">
@@ -38,13 +40,16 @@
         <div class="filter_slider">
             <div class="filter_name">Цена (EUR)</div>
             <div class="filter_price_pl">
-                <div class="sort_price_slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
-                    <div style="left: 0%;" class="slider_label_l">490</div>
-                    <div style="right: 0%;" class="slider_label_r">34500</div>
-                    <div class="ui-slider-range ui-widget-header" style="left: 25%; width: 50%; "></div>
-                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 25%; "></a>
-                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 75%; "></a>
+                <div class="sort_price_slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="price_slider">
+                    <div style="left: 0%;" class="slider_label_l">{{ min_price|floatformat }}</div>
+                    <div style="right: 0%;" class="slider_label_r">{{ max_price|floatformat }}</div>
+{#                    <div class="ui-slider-range ui-widget-header" style="left: 25%; width: 50%; "></div>#}
+{#                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 25%; "></a>#}
+{#                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 75%; "></a>#}
                 </div>
+                {% if step %}
+                    <script type="text/javascript">SetPriceSlider({{ min_price|floatformat }},{{ max_price|floatformat }},{{ step|floatformat }},false);</script>
+                {% endif %}
             </div>
         </div>
         <div class="filter_show_more"><a href="#">Дополнительные параметры</a></div>
@@ -68,7 +73,6 @@
 
     <div class="catalog">
         {% if catalog %}
-        {% autopaginate catalog 7 %}
         {% for catalog_item in catalog %}
             <div class="item">
                 <div class="item_img">
@@ -83,7 +87,6 @@
                 </div>
             </div>
         {% endfor %}
-        {% paginate %}
         {% endif %}
     </div><!-- /catalog -->
 
