@@ -11,6 +11,8 @@ $(function () {
 	});
 	$('.specs ul').cycle({fx:'fade', ctrls:'.specs_ctrls span'});
 
+    //$('div.pic').ite
+
     $('.fancybox').fancybox();
 
     $('#send_question').live('click',function(){
@@ -56,17 +58,60 @@ $(function () {
 
     $('.check_subtype').live('click',function(){
         var type = $('#re_type').val()
+        var country_id = $('#country_id').val()
         var subtype = $(this).attr('name')
         var region = $(this).parent().parent().parent().find('.filter_curr>.check_region').attr('name')
-        LoadCatalog(type, subtype, region);
+        LoadCatalog(type, subtype, region, country_id);
     });
 
     $('.check_region').live('click',function(){
         var type = $('#re_type').val()
+        var country_id = $('#country_id').val()
         var region = $(this).attr('name')
         var subtype = $(this).parent().parent().parent().find('.filter_curr>.check_subtype').attr('name')
-        LoadCatalog(type, subtype, region);
+        LoadCatalog(type, subtype, region, country_id);
     });
+
+    $('#select_country').live('change',function(){
+        $.ajax({
+            url: "/exclusive/load_catalog/",
+            data: {
+                country:$(this).val()
+            },
+            type: "POST",
+            success: function(data) {
+                $('.catalog').replaceWith(data);
+                var minp = $('#min_price').val()
+                var maxp = $('#max_price').val()
+                var price_label_l = $('.filter_price_pl').find('.slider_label_l')
+                var price_label_r = $('.filter_price_pl').find('.slider_label_r')
+
+                if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
+                    {
+                        if (maxp!=NaN)
+                            {SetPriceSlider(0,100,1,true);
+                            price_label_r.html(maxp);}
+                        else
+                            {SetPriceSlider(0,100,1,true);
+                            price_label_r.html(100);}
+                        price_label_l.html(0);
+                    }
+                else
+                    {
+                        len = maxp - minp
+                        stp = len/10
+                        SetPriceSlider(minp,maxp,stp,false);
+                        price_label_l.html(minp);
+                        price_label_r.html(maxp);
+                    }
+
+            },
+            error:function(jqXHR,textStatus,errorThrown) {
+                $('.catalog').replaceWith(jqXHR.responseText);
+            }
+        });
+    });
+
 
 });
 
@@ -90,14 +135,15 @@ function SetPriceSlider(start, end, step, disabl)
     });
 }
 
-function LoadCatalog(type, subtype, region)
+function LoadCatalog(type, subtype, region, country_id)
 {
     $.ajax({
         url: "/countries/load_catalog/",
         data: {
             type:type,
             subtype:subtype,
-            region:region
+            region:region,
+            country_id:country_id
         },
         type: "POST",
         success: function(data) {
@@ -109,8 +155,8 @@ function LoadCatalog(type, subtype, region)
 
             if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
                 {
-                    if (minp==maxp)
-                        {SetPriceSlider(0,maxp,1,true);
+                    if (maxp!=NaN)
+                        {SetPriceSlider(0,100,1,true);
                         price_label_r.html(maxp);}
                     else
                         {SetPriceSlider(0,100,1,true);

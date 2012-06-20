@@ -1,21 +1,48 @@
-{% load thumbnail %}
-<div class="catalog">
+{% load thumbnail items_loader_extras %}
+<div class="catalog load_block">
     {% if catalog %}
         <input type="hidden" id="max_price" value="{{ max_price|floatformat }}">
         <input type="hidden" id="min_price" value="{{ min_price|floatformat }}">
-        {% for catalog_item in catalog %}
-        <div class="item">
-            <div class="item_img">
-                {% thumbnail catalog_item.image "156x123" crop="center" as im %}
-                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
-                {% endthumbnail %}
-                <a href="{{ catalog_item.get_absolute_url }}" class="item_img_fr"></a></div>
-            <div class="item_cat_des">
-                <a href="{{ catalog_item.get_absolute_url }}" class="item_name_lnk">{{ catalog_item.title }}</a>
-                <div class="item_price">{{ catalog_item.get_str_price }} EUR</div>
-                <p>{{ catalog_item.description|truncatewords:33 }}</p>
-            </div>
-        </div>
-    {% endfor %}
+{#        {{ region }} - {{ subtype }} - {{ loaded_count }} - {{ country_id }}#}
+
+        {% if type == "residential" %}
+
+            {% if subtype == 'all' and region == 'all' %}
+                {% block_items_loader catalog "Country" "realestate" "rre" loaded_count country_id "get_rre_catalog()" %}
+            {% endif %}
+
+            {% if subtype == 'all' and region != 'all' %}
+                {% block_items_loader catalog "RE_Region" "realestate" "rre" loaded_count region "get_rr_estate()" %}
+            {% endif %}
+
+            {% if subtype != 'all' and region == 'all' %}
+                {% block_items_loader catalog "RRE_Type" "realestate" "rre" loaded_count subtype "get_estate()" %}
+            {% endif %}
+
+            {% if subtype != 'all' and region != 'all' %}
+                {% block_items_loader catalog "RRE_Type" "realestate" "rre" loaded_count subtype condition %}
+            {% endif %}
+
+        {% endif %}
+
+        {% if type == "commertial" %}
+
+            {% if subtype == 'all' and region == 'all' %}
+                {% block_items_loader catalog "Country" "realestate" "rre" loaded_count country_id "get_cre_catalog()" %}
+            {% endif %}
+
+            {% if subtype == 'all' and region != 'all' %}
+               {% block_items_loader catalog "RE_Region" "realestate" "rre" loaded_count region "get_cr_estate()" %}
+            {% endif %}
+
+            {% if subtype != 'all' and region == 'all' %}
+                {% block_items_loader catalog "CRE_Type" "realestate" "rre" loaded_count subtype "get_estate()" %}
+            {% endif %}
+
+            {% if subtype != 'all' and region != 'all' %}
+                {% block_items_loader catalog "CRE_Type" "realestate" "rre" loaded_count subtype condition %}
+            {% endif %}
+
+        {% endif %}
     {% endif %}
 </div>

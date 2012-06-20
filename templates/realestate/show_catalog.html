@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail faq_extras siteblocks_extras pages_extras %}
+{% load thumbnail faq_extras siteblocks_extras pages_extras items_loader_extras  %}
 
 {% if page.title %}
     {% block title %}
@@ -15,6 +15,7 @@
 {% endblock %}
 
 {% block main_right %}
+    <input type="hidden" value="{{ item.id }}" id="country_id">
     {% if item_type == "residential" %}
         <h1>Жилая недвижимость <img src="/media/images/flag1.png" alt="" class="flag" /><span> или <a href="{{ item.get_absolute_url }}catalog/commertial/" class="check_type">Коммерческая недвижимость</a></span></h1>
         <input type="hidden" value="residential" id="re_type">
@@ -71,23 +72,21 @@
         </div>
     </div><!-- /filters -->
 
-    <div class="catalog">
-        {% if catalog %}
-        {% for catalog_item in catalog %}
+    <div class="catalog load_block">
+        {% for item in catalog %}
             <div class="item">
                 <div class="item_img">
-                    {% thumbnail catalog_item.image "156x123" crop="center" as im %}
+                    {% thumbnail item.image "156x123" crop="center" as im %}
                         <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
                     {% endthumbnail %}
-                    <a href="{{ catalog_item.get_absolute_url }}" class="item_img_fr"></a></div>
+                    <a href="{{ item.get_absolute_url }}" class="item_img_fr"></a></div>
                 <div class="item_cat_des">
-                    <a href="{{ catalog_item.get_absolute_url }}" class="item_name_lnk">{{ catalog_item.title }}</a>
-                    <div class="item_price">{{ catalog_item.get_str_price }} EUR</div>
-                    <p>{{ catalog_item.description|truncatewords:33 }}</p>
+                    <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
+                    <div class="item_price">{{ item.get_str_price }} EUR</div>
+                    <p>{{ item.description|truncatewords:33 }}</p>
                 </div>
             </div>
         {% endfor %}
-        {% endif %}
     </div><!-- /catalog -->
 
 {% endblock %}

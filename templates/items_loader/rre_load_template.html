@@ -1,0 +1,30 @@
+{% load pytils_numeral thumbnail %}
+
+{% for item in items %}    
+    <div class="item {% if not initial %} loaded" style="display: none;{% endif %}">
+        <div class="item_img">
+            {% thumbnail item.image "156x123" crop="center" as im %}
+                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+            {% endthumbnail %}
+            <a href="{{ item.get_absolute_url }}" class="item_img_fr"></a></div>
+        <div class="item_cat_des">
+            <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
+            <div class="item_price">{{ item.get_str_price }} EUR</div>
+            <p>{{ item.description|truncatewords:33 }}</p>
+        </div>
+    </div>
+{% endfor %}
+
+{% if initial and next_count %}
+    <div class="show_more service_load_button">
+    {% if next_count < load_count %}
+        <a href="#" class="load_items">Ещё <span class="cnt">{{ next_count }}</span> запис{{ next_count|choose_plural:"ь,и,ей" }}</a>
+    {% else %}
+        <a href="#" class="load_items">Ещё <span class="cnt">{{ load_count }}</span> запис{{ load_count|choose_plural:"ь,и,ей" }}</a>
+    {% endif %}
+    </div>
+{% endif %}
+
+{% if remaining_count %}
+        <input type="hidden" id="remaining_count_text" value="Ещё <span class='cnt'>{{ remaining_count }}</span> запис{{ remaining_count|choose_plural:"ь,и,ей" }}">
+{% endif %}

@@ -4,7 +4,7 @@
 
 {% if page.title %}
     {% block title %}
-        Главная &mdash;
+        {{ catalog_item.title }} &mdash;
     {% endblock %}
 {% endif %}
 
@@ -24,7 +24,6 @@
     <h1>{{ catalog_item.title }}</h1>
     <div class="item">
         <div class="item_imgs">
-
             <div class="item_img_zl">
             {% thumbnail catalog_item.image "1000" upscale=0 as big %}
                 {% thumbnail catalog_item.image "276x206" crop="center" as im %}

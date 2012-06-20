@@ -110,4 +110,51 @@ class News(models.Model):
     def get_absolute_url(self):
         return u'/news/%s/' % self.id
 
+def file_path_rewiews(instance, filename):
+    return os.path.join('images','reviews',  translify(filename).replace(' ', '_') )
 
+class Review(models.Model):
+    image = ImageField(verbose_name=u'картинка', upload_to=file_path_rewiews, blank=True)
+    title = models.CharField(verbose_name=u'заголовок', max_length=100)
+    text = models.TextField(verbose_name=u'текст')
+    date_add = models.DateTimeField(verbose_name = u'дата добавления', default = datetime.datetime.now)
+    is_published = models.BooleanField(verbose_name = u'Опубликовано', default = True,)
+
+    objects = PublishedManager()
+
+    class Meta:
+        ordering = ['-date_add',]
+        verbose_name =_(u'review')
+        verbose_name_plural =_(u'reviews')
+        get_latest_by = 'date_add'
+
+    def __unicode__(self):
+        return self.title
+
+    def get_src_image(self):
+        return self.image.url
+
+def file_path_partners_logo(instance, filename):
+    return os.path.join('images','partnlogos',  translify(filename).replace(' ', '_') )
+
+class Partner(models.Model):
+    logo = ImageField(verbose_name=u'картинка', upload_to=file_path_partners_logo, blank=True)
+    title = models.CharField(verbose_name=u'название', max_length=100)
+    description = models.TextField(verbose_name=u'описание', blank=True)
+    url = models.CharField(max_length=100, verbose_name=u'ссылка' #, help_text=u'Адрес страницы,например, "/your_address/"'
+    )
+    order = models.IntegerField(u'порядок сортировки', help_text=u'Чем больше число, тем выше располагается элемент', default=10)
+    is_published = models.BooleanField(verbose_name = u'Опубликовано', default = True,)
+
+    objects = PublishedManager()
+
+    class Meta:
+        ordering = ['-order',]
+        verbose_name =_(u'partner')
+        verbose_name_plural =_(u'partners')
+
+    def __unicode__(self):
+        return self.title
+
+    def get_src_image(self):
+        return self.logo.url

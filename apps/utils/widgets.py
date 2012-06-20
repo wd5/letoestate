@@ -58,3 +58,8 @@ class AdminImageWidget(forms.FileInput):
                            % (value.url, value.url, value.instance.id, value.instance.id)))
         output.append(super(AdminImageWidget, self).render(name, value, attrs))
         return mark_safe(u''.join(output))
+
+class LinkWidget(forms.Textarea):
+    def render(self,name,value,attrs=None):
+        url = value.split('|')
+        return mark_safe(u'<a href="%s" target="_blank">%s</a>' % (url[1],url[0]))

@@ -9,6 +9,9 @@
 {% endif %}
 
 {% block main_left %}
+    {% if page.id == 1 %}
+        {% get_aboutblk_menu request.path %}
+    {% endif %}
     {% if page.parent %}
         {% get_menu_by_parent page.parent request.path %}
     {% endif %}

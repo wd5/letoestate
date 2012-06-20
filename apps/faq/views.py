@@ -61,3 +61,15 @@ class ExpertListView(ListView):
     queryset = model.objects.published()
 
 experts = ExpertListView.as_view()
+
+class ShowExpertView(DetailView):
+    model = Expert
+    slug_field = 'pk'
+    template_name = 'faq/experts.html'
+    context_object_name = 'expert'
+
+    def get_context_data(self, **kwargs):
+        context = super(ShowExpertView, self).get_context_data(**kwargs)
+        return context
+
+show_expert = ShowExpertView.as_view()

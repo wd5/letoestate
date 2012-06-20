@@ -76,4 +76,15 @@ msgstr "заявки"
 msgid "request"
 msgstr "заявка"
 
+msgid "exclusive_estate"
+msgstr "недвижимость"
+
+msgid "exclusive_estates"
+msgstr "эксклюзивные предложения"
+
+msgid "exre_attached_photos"
+msgstr "дополнительные изображения"
+
+msgid "exre_attached_photo"
+msgstr "изображение"
 

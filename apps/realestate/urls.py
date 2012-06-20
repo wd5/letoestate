@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = patterns('',
 
     (r'^$',show_country,{'pk':'1'}),
-    (r'^send_request/(?P<type>[^/]+)/(?P<pk>\d*)/$',send_request),
     (r'^load_catalog/$',csrf_exempt(load_catalog)),
+    (r'^send_request/(?P<type>[^/]+)/(?P<pk>\d*)/$',send_request),
     (r'^save_request/$',csrf_exempt(save_request)),
     (r'^advantage/advantage/$','apps.views.index'),
     (r'^(?P<slug>[^/]+)/$',show_country),

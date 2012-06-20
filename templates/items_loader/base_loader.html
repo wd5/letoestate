@@ -1,0 +1,28 @@
+{% if items %}
+    {% if model_name and app_name and template_name %}
+
+        <input type="hidden" class="m_name" value="{{ model_name }}">
+        <input type="hidden" class="a_name" value="{{ app_name }}">
+        <input type="hidden" class="template" value="{{ template_name }}">
+        <input type="hidden" class="init_cnt" value="{{ items.count }}">
+
+        {% if add_parameter or add_id %}
+            <input type="hidden" class="add_parameter" value="{{ add_id }}|{{ add_parameter }}">
+        {% endif %}
+
+
+        {% include load_template %}
+
+    {% else %}
+
+        {% include load_template %}
+        <input type="hidden" id="endrange" value="{{ endrange }}">
+        <input type="hidden" id="remaining_count" value="{{ remaining_count }}">
+
+    {% endif %}
+{% else %}
+    {% if model_name and app_name and template_name %}
+    {% else %}
+        <input type="hidden" id="remaining_count" value="-1">
+    {% endif %}
+{% endif %}

@@ -33,7 +33,31 @@ def get_menu_by_parent(parent, url):
         except:
             pass
 
-        child_pages = Page.objects.filter(parent = parent)
+        child_pages = Page.objects.filter(parent = parent, is_published=True)
         return {'child_pages': child_pages, 'current':current}
     except Page.DoesNotExist:
         return {}
+
+@register.inclusion_tag("pages/aboutblk_menu.html")
+def get_aboutblk_menu(url):
+    url = url.split('/')
+
+    if url[1]:
+        current = u'/%s/' % url[1]
+    else:
+        current = u'/'
+
+#    try:
+#        if url[2]:
+#            current = u'/%s/%s/' % (url[1], url[2])
+#            try:
+#                if url[3]:
+#                    current = u'/%s/%s/%s/' % (url[1], url[2], url[3])
+#            except:
+#                pass
+#    except:
+#        pass
+    return {'current':current}
+
+
+

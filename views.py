@@ -22,7 +22,7 @@ def handle_uploaded_file(f, filename, folder):
     for chunk in f.chunks():
         destination.write(chunk)
     destination.close()
-    return '/static/uploads/'+ folder + hashed_name + ext
+    return '/media/uploads/'+ folder + hashed_name + ext
 
 @csrf_exempt
 def upload_img(request):

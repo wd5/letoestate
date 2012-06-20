@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+from sorl.thumbnail.admin import AdminImageMixin
 from django import forms
-from apps.siteblocks.models import BottomSiteMenu, Settings, News
-
-from apps.utils.widgets import RedactorMini,Redactor
+from apps.siteblocks.models import BottomSiteMenu, Settings, News, Review, Partner
+from apps.utils.widgets import Redactor, AdminImageWidget, LinkWidget
 
 class BottomSiteMenuAdmin(admin.ModelAdmin):
     list_display = ('title', 'url', 'order', 'is_published',)
@@ -46,12 +46,45 @@ class NewsAdminForm(forms.ModelForm):
     class Meta:
         model = News
 
-class NewsAdmin(admin.ModelAdmin):
+class NewsAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('title', 'country', 'date_add', 'is_published',)
     list_display_links = ('title',)
     list_filter = ('is_published', 'date_add', )
+    list_editable = ('is_published',)
     form = NewsAdminForm
     date_hierarchy = 'date_add'
-
 admin.site.register(News, NewsAdmin)
+
+class ReviewAdminForm(forms.ModelForm):
+    text = forms.CharField(
+        widget=Redactor(attrs={'cols': 170, 'rows': 30}),
+        label = u'Текст',
+    )
+    class Meta:
+        model = Review
+
+class ReviewAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = ('id','title', 'date_add', 'is_published',)
+    list_display_links = ('id','title', 'date_add',)
+    list_filter = ('is_published', 'date_add', )
+    list_editable = ('is_published',)
+    form = ReviewAdminForm
+admin.site.register(Review, ReviewAdmin)
+
+class ParnterAdminForm(forms.ModelForm):
+    description = forms.CharField(
+        widget = Redactor(attrs={'cols': 170, 'rows': 30}),
+        label = u'Описание',
+        required = False,
+    )
+    class Meta:
+        model = Partner
+
+class ParnterAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = ('id','title', 'url', 'order', 'is_published',)
+    list_display_links = ('id','title', 'url',)
+    list_filter = ('is_published', )
+    list_editable = ('is_published','order',)
+    form = ParnterAdminForm
+admin.site.register(Partner, ParnterAdmin)
 

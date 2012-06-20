@@ -16,4 +16,16 @@ msgstr "параметр"
 msgid "site_settings"
 msgstr "настройки сайта"
 
+msgid "review"
+msgstr "отзыв"
+
+msgid "reviews"
+msgstr "отзывы"
+
+msgid "partner"
+msgstr "партнёр"
+
+msgid "partners"
+msgstr "партнёры"
+
 

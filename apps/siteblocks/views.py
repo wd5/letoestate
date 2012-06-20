@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 
-from models import News
+from models import News, Review, Partner
 
 class NewsListView(ListView):
     model = News
@@ -78,3 +78,19 @@ class LatestNewsFeed(Feed):
 
     def item_description(self, item):
         return u'%s...' % item.text[:350]
+
+class ReviewsListView(ListView):
+    model = Review
+    template_name = 'siteblocks/show_reviews_or_partners.html'
+    context_object_name = 'reviews'
+    queryset = model.objects.published()
+
+show_reviews = ReviewsListView.as_view()
+
+class PartnersListView(ListView):
+    model = Partner
+    template_name = 'siteblocks/show_reviews_or_partners.html'
+    context_object_name = 'partners'
+    queryset = model.objects.published()
+
+show_parnters = PartnersListView.as_view()

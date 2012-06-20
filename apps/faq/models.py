@@ -58,7 +58,12 @@ def file_path_expert_photo(instance, filename):
 class Expert(models.Model):
     full_name = models.CharField(max_length = 150, verbose_name = u'Ф.И.О.')
     image = ImageField(verbose_name=u'фотография', upload_to=file_path_expert_photo)
-    description = models.TextField(verbose_name=u'текст о специалисте',)
+    description = models.TextField(verbose_name=u'краткое описание',)
+
+    full_description = models.TextField(verbose_name=u'полное описание',)
+    email = models.EmailField(max_length = 70, verbose_name = u'E-mail')
+    phonenumber = models.CharField(max_length = 50, verbose_name = u'Номер телефона')
+
     is_published = models.BooleanField(verbose_name = u'опубликовано', default=True)
     order = models.IntegerField(u'порядок сортировки', help_text=u'Чем больше число, тем выше располагается элемент', default=10)
 
@@ -76,5 +81,7 @@ class Expert(models.Model):
     def get_src_image(self):
         return self.image.url
 
+    def get_absolute_url(self):
+        return u'/experts/%s/' % self.id
 
 

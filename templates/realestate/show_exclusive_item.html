@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pages_extras pagination_tags %}
+
+{% if page.title %}
+    {% block title %}
+        {{ item.title }} &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+
+    <a href="/exclusive/" class="catalog_lnk">Эксклюзивные предложения<img src="/media/images/flag1.png" alt="" class="flag" /></a>
+
+    <h1>{{ item.title }}</h1>
+    <div class="item">
+        <div class="item_imgs">
+
+            <div class="item_img_zl">
+            {% thumbnail item.image "1000" upscale=0 as big %}
+                {% thumbnail item.image "276x206" crop="center" as im %}
+                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    <a href="{{ big.url }}" rel="{{ item.id }}" class="item_img_zl_fr fancybox"></a>
+                {% endthumbnail %}
+            {% endthumbnail %}
+            </div>
+
+            {% for photo in item.get_attached_photos %}
+                <div class="item_img_zs">
+                {% thumbnail photo.image "1000" upscale=0 as big %}
+                    {% thumbnail photo.image "117x86" crop="center" as im %}
+                    <img src="{{ im.url }}" alt="" />
+                    <a href="{{ big.url }}" rel="{{ item.id }}" class="item_img_zs_fr fancybox"></a>
+                    {% endthumbnail %}
+                {% endthumbnail %}
+                </div>
+            {% endfor %}
+
+        </div>
+        <div class="item_des">
+            <p>{{ item.description }}</p>
+            <div class="item_specs">
+                <div class="item_spec">
+                    <span class="item_spec_value">{{ item.country }}</span>
+                    <span class="item_spec_name">Страна</span>
+                </div>
+            </div>
+            <div class="item_ad">
+                <div class="item_ad_price">{{ item.get_str_price }} EUR</div>
+                <div class="submit">
+                    <div><a href="/countries/send_request/exclusive/{{ item.id }}/" class="fancybox">Оставить заявку</a></div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /item -->
+{% endblock %}

@@ -1,8 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
 from django.contrib import admin
 from django import forms
-from apps.utils.widgets import Redactor, AdminImageWidget
-from models import Country, RE_Region, RRE_Type, CRE_Type, ResidentialRealEstate, CommercialRealEstate, CRE_Attached_photo, RRE_Attached_photo, RRE_AdditionalParameter, CRE_AdditionalParameter, ParameterType, Request
+from apps.utils.widgets import Redactor, AdminImageWidget, LinkWidget
+from models import Country, RE_Region, RRE_Type, CRE_Type, ExclusiveRealEstate, EXRE_Attached_photo, ResidentialRealEstate, CommercialRealEstate, CRE_Attached_photo, RRE_Attached_photo, RRE_AdditionalParameter, CRE_AdditionalParameter, ParameterType, Request
 from sorl.thumbnail.admin import AdminImageMixin
 
 class CountryAdminForm(forms.ModelForm):
@@ -30,7 +30,7 @@ class RE_RegionAdmin(admin.ModelAdmin):
     list_display_links = ('id','title', 'country',)
     list_editable = ('order', 'is_published',)
     search_fields = ('title','country',)
-    list_filter = ('is_published',)
+    list_filter = ('is_published','country')
 
 class RRE_TypeAdmin(admin.ModelAdmin):
     list_display = ('id','title', 'order', 'is_published',)
@@ -49,7 +49,7 @@ class CRE_TypeAdmin(admin.ModelAdmin):
 class RREstateAdminForm(forms.ModelForm):
     add_parameter_info = forms.CharField(
         widget=Redactor(attrs={'cols': 170, 'rows': 20}),
-        label = u'Информация о доп. параметрах',
+        label = u'Информация о доп. параметрах',required=False
     )
     class Meta:
         model = ResidentialRealEstate
@@ -73,7 +73,7 @@ class ResidentialRealEstateAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display_links = ('id','title', 'slug',)
     list_editable = ('price', 'order', 'is_published',)
     search_fields = ('title', 'description', 'add_parameter_info',)
-    list_filter = ('is_published', 'price', 'region', 'rre_type')
+    list_filter = ('is_published', 'country', 'region', 'rre_type', 'price', )
     form = RREstateAdminForm
     inlines = [
         RR_AttachedPhotoInline,
@@ -87,6 +87,12 @@ class CREstateAdminForm(forms.ModelForm):
     )
     class Meta:
         model = CommercialRealEstate
+    class Media:
+        js = (
+            '/media/js/jquery.js',
+            '/media/js/clientadmin.js',
+            '/media/js/jquery.synctranslit.js',
+            )
 
 class CR_AttachedPhotoInline(AdminImageMixin,admin.TabularInline):
     model = CRE_Attached_photo
@@ -100,7 +106,7 @@ class CommercialRealEstateAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display_links = ('id','title', 'slug',)
     list_editable = ('price', 'order', 'is_published',)
     search_fields = ('title', 'description', 'add_parameter_info',)
-    list_filter = ('is_published', 'price', 'region', 'cre_type')
+    list_filter = ('is_published', 'country', 'region', 'cre_type', 'price', )
     form = CREstateAdminForm
     inlines = [
         CR_AttachedPhotoInline,
@@ -116,7 +122,7 @@ class ParameterTypeAdmin(admin.ModelAdmin):
 
 class RequestAdminForm(forms.ModelForm):
     url = forms.CharField(
-        #widget=forms.URLField(),
+        widget=LinkWidget,
         label = u'Ссылка на объект',
     )
     class Meta:
@@ -129,11 +135,41 @@ class RequestAdmin(admin.ModelAdmin):
     form = RequestAdminForm
     list_filter = ('date_create',)
 
+class EXREstateAdminForm(forms.ModelForm):
+    description = forms.CharField(
+        widget=Redactor(attrs={'cols': 170, 'rows': 20}),
+        label = u'Описание',
+    )
+    class Meta:
+        model = ExclusiveRealEstate
+
+    class Media:
+        js = (
+            '/media/js/jquery.js',
+            '/media/js/clientadmin.js',
+            '/media/js/jquery.synctranslit.js',
+            )
+
+class EXRE_AttachedPhotoInline(AdminImageMixin,admin.TabularInline):
+    model = EXRE_Attached_photo
+
+class ExclusiveRealEstateAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = ('id', 'title', 'slug', 'price', 'order', 'is_published',)
+    list_display_links = ('id','title', 'slug',)
+    list_editable = ('price', 'order', 'is_published',)
+    search_fields = ('title', 'description',)
+    list_filter = ('is_published', 'price', 'country')
+    form = EXREstateAdminForm
+    inlines = [
+        EXRE_AttachedPhotoInline,
+    ]
+
 admin.site.register(Request, RequestAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(RE_Region, RE_RegionAdmin)
 admin.site.register(ParameterType, ParameterTypeAdmin)
 admin.site.register(RRE_Type, RRE_TypeAdmin)
 admin.site.register(CRE_Type, CRE_TypeAdmin)
+admin.site.register(ExclusiveRealEstate, ExclusiveRealEstateAdmin)
 admin.site.register(ResidentialRealEstate, ResidentialRealEstateAdmin)
 admin.site.register(CommercialRealEstate, CommercialRealEstateAdmin)

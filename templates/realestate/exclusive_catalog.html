@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pages_extras items_loader_extras  %}
+
+{% if page.title %}
+    {% block title %}
+        Эксклюзивные предложения &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+
+    <div class="filters">
+        <div class="filter">
+            <span class="filter_curr">Страна:</span>
+            <select name="country" id="select_country">
+                    <option value="all">
+                {% for country in countries %}
+                    <option value="{{ country.country }}">{{ country.country }}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter_slider">
+            <div class="filter_name">Цена (EUR)</div>
+            <div class="filter_price_pl">
+                <div class="sort_price_slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="price_slider">
+                    <div style="left: 0%;" class="slider_label_l">{{ min_price|floatformat }}</div>
+                    <div style="right: 0%;" class="slider_label_r">{{ max_price|floatformat }}</div>
+                </div>
+                {% if step %}
+                    <script type="text/javascript">SetPriceSlider({{ min_price|floatformat }},{{ max_price|floatformat }},{{ step|floatformat }},false);</script>
+                {% endif %}
+            </div>
+        </div>
+    </div><!-- /filters -->
+
+    <div class="catalog load_block">
+        {% for item in catalog %}
+
+            <div class="item">
+                <div class="item_img">
+                    {% thumbnail item.image "156x123" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    {% endthumbnail %}
+                    <a href="{{ item.get_absolute_url }}" class="item_img_fr"></a></div>
+                <div class="item_cat_des">
+                    <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
+                    <div class="item_price">{{ item.get_str_price }} EUR</div>
+                    <p>{{ item.description|truncatewords:33 }}</p>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div><!-- /catalog -->
+
+{% endblock %}

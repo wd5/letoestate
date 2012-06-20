@@ -2,6 +2,7 @@
 DATABASE_NAME = u'letoestate'
 PROJECT_NAME = u'letoestate'
 SITE_NAME = u'LetoEstate'
+SITE_URL = u'letoestate.octweb.ru'
 DEFAULT_FROM_EMAIL = u'support@letoestate.octweb.ru'
 
 from config.base import *
@@ -19,6 +20,7 @@ INSTALLED_APPS += (
     'apps.faq',
     'apps.slider',
     'apps.realestate',
+    'apps.utils.items_loader',
 
     'sorl.thumbnail',
     #'south',

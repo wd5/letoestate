@@ -3,8 +3,9 @@ import datetime, settings
 from django.db.models import Max, Min
 from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpResponseBadRequest, HttpResponsePermanentRedirect
 from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView, FormView, DetailView, ListView, RedirectView, View
-from apps.realestate.models import Country, ResidentialRealEstate, CRE_Type, CommercialRealEstate, RRE_Type, ParameterType
+from apps.realestate.models import Country, ResidentialRealEstate, CRE_Type, CommercialRealEstate, RRE_Type, ParameterType, ExclusiveRealEstate
 from apps.siteblocks.models import News, Settings
 from apps.realestate.forms import RequestForm
 from django.core.mail.message import EmailMessage
@@ -33,6 +34,7 @@ class ShowCatalogView(DetailView):
             item_slug = self.kwargs.get('item', None)
             if item_slug:
                 context['catalog_item'] = CommercialRealEstate.objects.get(slug=item_slug)
+
         dic = context['catalog'].aggregate(Min('price'), Max('price'))
         context['max_price'] = dic['price__max']
         context['min_price'] = dic['price__min']
@@ -42,10 +44,17 @@ class ShowCatalogView(DetailView):
         except TypeError:
             context['step'] = False
 
+        try:
+            loaded_count = Settings.objects.get(name='loaded_count').value
+        except:
+            loaded_count = 5
+        context['loaded_count'] = int(loaded_count)
+        context['catalog'] = context['catalog'][:loaded_count]
+
         return context
 
-show_residential_catalog = ShowCatalogView.as_view()
-show_commertial_catalog = ShowCatalogView.as_view()
+show_residential_catalog = csrf_protect(ShowCatalogView.as_view())
+show_commertial_catalog = csrf_protect(ShowCatalogView.as_view())
 
 class ShowCatalogItemView(DetailView):
     model = Country
@@ -129,8 +138,13 @@ class RequestFormView(FormView):
                 catalog_item = CommercialRealEstate.objects.get(id=pk)
             except ResidentialRealEstate.DoesNotExist:
                 return HttpResponseBadRequest()
+        if type == 'exclusive':
+            try:
+                catalog_item = ExclusiveRealEstate.objects.get(id=pk)
+            except ResidentialRealEstate.DoesNotExist:
+                return HttpResponseBadRequest()
 
-        initial['url'] = catalog_item.get_absolute_url()
+        initial['url'] = u'%s|%s' % (catalog_item.title, catalog_item.get_absolute_url())
 
         kwargs.update({
             'initial': initial,
@@ -148,11 +162,15 @@ class SaveRequestView(View):
                 saved_object = form.save()
                 subject = u'LetoEstate - Информация о заявке.'
                 subject = u''.join(subject.splitlines())
+                url = saved_object.url.split('|')
                 message = render_to_string(
                     'realestate/message_template.html',
                         {
                         'saved_object': saved_object,
-                        }
+                        'sitename': settings.SITE_URL,
+                        'url_link': url[1],
+                        'url_name': url[0]
+                    }
                 )
                 try:
                     emailto = Settings.objects.get(name='workemail').value
@@ -179,61 +197,64 @@ save_request = SaveRequestView.as_view()
 class LoadCatalogView(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            if 'type' not in request.POST or 'subtype' not in request.POST or 'region' not in request.POST:
+            if 'type' not in request.POST or 'subtype' not in request.POST or 'region' not in request.POST or 'country_id' not in request.POST:
                 return HttpResponseBadRequest()
 
+            country_id = request.POST['country_id']
             type = request.POST['type']
             subtype = request.POST['subtype']
             region = request.POST['region']
 
+            try:
+                country_id = int(country_id)
+            except ValueError:
+                return HttpResponseBadRequest()
+            if region != "all":
+                try:
+                    region = int(region)
+                except ValueError:
+                    return HttpResponseBadRequest()
+            if subtype != "all":
+                try:
+                    subtype = int(subtype)
+                except ValueError:
+                    return HttpResponseBadRequest()
+            if subtype != 'all' and region != 'all':
+                condition = u'get_estate().filter(region=%s)' % region
+            else:
+                condition = False
+
             if type == "residential":
-                queryset = ResidentialRealEstate.objects.published()
+                country = Country.objects.get(pk=country_id)
+                queryset = country.get_rre_catalog()
+
+                #queryset = ResidentialRealEstate.objects.published().filter()
+
                 if subtype == "all":
                     if region == "all":
                         pass
                     else:
-                        try:
-                            region = int(region)
-                        except ValueError:
-                            return HttpResponseBadRequest()
                         queryset = queryset.filter(region=region)
                 else:
-                    try:
-                        subtype = int(subtype)
-                    except ValueError:
-                        return HttpResponseBadRequest()
                     if region == "all":
                         queryset = queryset.filter(rre_type=subtype)
                     else:
-                        try:
-                            region = int(region)
-                        except ValueError:
-                            return HttpResponseBadRequest()
                         queryset = queryset.filter(rre_type=subtype).filter(region=region)
             elif type == "commertial":
-                queryset = CommercialRealEstate.objects.published()
+                country = Country.objects.get(pk=country_id)
+                queryset = country.get_cre_catalog()
+
+                #queryset = CommercialRealEstate.objects.published().filter()
                 if subtype == "all":
                     if region == "all":
                         pass
                     else:
-                        try:
-                            region = int(region)
-                        except ValueError:
-                            return HttpResponseBadRequest()
                         queryset = queryset.filter(region=region)
                 else:
-                    try:
-                        subtype = int(subtype)
-                    except ValueError:
-                        return HttpResponseBadRequest()
                     if region == "all":
-                        queryset = queryset.filter(rre_type=subtype)
+                        queryset = queryset.filter(cre_type=subtype)
                     else:
-                        try:
-                            region = int(region)
-                        except ValueError:
-                            return HttpResponseBadRequest()
-                        queryset = queryset.filter(rre_type=subtype).filter(region=region)
+                        queryset = queryset.filter(cre_type=subtype).filter(region=region)
             else:
                 return HttpResponseBadRequest('Произошла ошибка. Приносим извинения.')
 
@@ -246,9 +267,17 @@ class LoadCatalogView(View):
             except TypeError:
                 step = False
 
+            try:
+                loaded_count = Settings.objects.get(name='loaded_count').value
+            except:
+                loaded_count = 5
+            loaded_count = int(loaded_count)
+
             items_html = render_to_string(
                 'realestate/catalog_template.html',
-                    {'catalog': queryset, 'request': request, 'region': region, 'subtype': subtype,
+                    {'catalog': queryset[:loaded_count], 'loaded_count': loaded_count, 'request': request,
+                     'type': type, 'region': region, 'subtype': subtype, 'country_id': country_id,
+                     'condition': condition,
                      'max_price': max_price, 'min_price': min_price, 'step': step}
             )
             return HttpResponse(items_html)
@@ -256,3 +285,115 @@ class LoadCatalogView(View):
             return HttpResponseBadRequest()
 
 load_catalog = LoadCatalogView.as_view()
+
+class ExclusiveCatalogView(ListView):
+    model = ExclusiveRealEstate
+    template_name = 'realestate/exclusive_catalog.html'
+    context_object_name = 'catalog'
+    queryset = model.objects.published()
+
+    def get_context_data(self, **kwargs):
+        context = super(ExclusiveCatalogView, self).get_context_data(**kwargs)
+        item = self.kwargs.get('slug', None)
+
+        dic = context['catalog'].aggregate(Min('price'), Max('price'))
+        context['max_price'] = dic['price__max']
+        context['min_price'] = dic['price__min']
+        try:
+            len = context['max_price'] - context['min_price']
+            context['step'] = len / 10
+        except TypeError:
+            context['step'] = False
+
+        try:
+            loaded_count = Settings.objects.get(name='loaded_count').value
+        except:
+            loaded_count = 5
+        context['loaded_count'] = int(loaded_count)
+        context['countries'] = ExclusiveRealEstate.objects.values('country').distinct().order_by('country')
+        context['catalog'] = context['catalog'][:loaded_count]
+        return context
+
+show_exclusive_catalog = ExclusiveCatalogView.as_view()
+
+class ShowExclusiveItemView(DetailView):
+    slug_field = 'slug'
+    model = ExclusiveRealEstate
+    template_name = 'realestate/show_exclusive_item.html'
+    context_object_name = 'item'
+
+show_exclusive_item = ShowExclusiveItemView.as_view()
+
+class LoadExclCatalogView(View):
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            if 'country' not in request.POST:
+                return HttpResponseBadRequest()
+            country = request.POST['country']
+            try:
+                loaded_count = Settings.objects.get(name='loaded_count').value
+            except:
+                loaded_count = 5
+            loaded_count = int(loaded_count)
+
+            if country == "all":
+                queryset = ExclusiveRealEstate.objects.published()[:loaded_count]
+                condition = ''
+            else:
+                queryset = ExclusiveRealEstate.objects.filter(country=country)[:loaded_count]
+                condition = 'filter(country="%s")' % country
+
+            dic = queryset.aggregate(Min('price'), Max('price'))
+            max_price = dic['price__max']
+            min_price = dic['price__min']
+            try:
+                len = max_price - min_price
+                step = len / 10
+            except TypeError:
+                step = False
+
+            try:
+                loaded_count = Settings.objects.get(name='loaded_count').value
+            except:
+                loaded_count = 5
+            loaded_count = int(loaded_count)
+
+            items_html = render_to_string(
+                'realestate/excl_catalog_template.html',
+                    {'catalog': queryset[:loaded_count], 'loaded_count': loaded_count, 'request': request,
+                     'condition': condition,
+                     'country': country, 'max_price': max_price, 'min_price': min_price, 'step': step}
+            )
+            return HttpResponse(items_html)
+        else:
+            return HttpResponseBadRequest()
+
+load_excl_catalog = LoadExclCatalogView.as_view()
+
+class LoadRegionAdmin(View):
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            if 'id_country' not in request.POST:
+                return HttpResponseBadRequest()
+
+            id_country = request.POST['id_country']
+
+            try:
+                id_country = int(id_country)
+            except ValueError:
+                return HttpResponseBadRequest()
+
+            try:
+                curr_country = Country.objects.get(id=id_country)
+            except Country.DoesNotExist:
+                return HttpResponseBadRequest()
+
+            regions = curr_country.get_regions()
+            html_code = u'<option value=""></option>'
+            for region in regions:
+                html_code = u'%s<option value="%s">%s</option>' % (html_code,region.id,region.title)
+            return HttpResponse(html_code)
+        else:
+            return HttpResponseBadRequest()
+
+load_region = LoadRegionAdmin.as_view()

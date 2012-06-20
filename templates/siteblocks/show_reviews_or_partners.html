@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pages_extras %}
+
+{% block main_left %}
+    {% get_aboutblk_menu request.path %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+    {% if reviews %}
+        <div class="faqs">
+            <h1>Отзывы</h1>
+            {% for review in reviews %}
+                <div class="faq">
+                    <div class="question">
+                        {% if review.image %}
+                            <div class="img">
+                                {% thumbnail review.image "88x110" crop="center" as im %}
+                                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                                {% endthumbnail %}
+                            </div>
+                        {% endif %}
+                        <div class="faq_author"><span class="faq_data">{{ review.date_add|date:"j E" }}</span> <span class="faq_author_name">{{ review.title }}</span></div>
+                        <div class="question_text">{{ review.text|safe }}</div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if partners %}
+        <div class="partners">
+            <h1>Партнеры</h1>
+            {% for partner in partners %}
+                <div class="partner">
+
+                    <div class="img">
+                        {% thumbnail partner.logo "50x50" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                        {% endthumbnail %}
+                    </div>
+
+                    <div class="descr">
+                        <span class="name">{{ partner.title }}</span>
+                        <span class="description">{{ partner.description }}</span>
+                        <a href="http://{{ partner.url }}" target="_blank" class="link">{{ partner.url }}</a>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+{% endblock %}

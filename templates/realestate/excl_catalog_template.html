@@ -1,0 +1,8 @@
+{% load thumbnail items_loader_extras %}
+<div class="catalog load_block">
+    {% if catalog %}
+        <input type="hidden" id="max_price" value="{{ max_price|floatformat }}">
+        <input type="hidden" id="min_price" value="{{ min_price|floatformat }}">
+        {% block_items_loader catalog "ExclusiveRealEstate" "realestate" "rre" loaded_count "" condition %}
+    {% endif %}
+</div>

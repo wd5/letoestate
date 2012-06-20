@@ -17,6 +17,7 @@ class Country(models.Model):
     title = models.CharField(verbose_name=u'название', max_length=100)
     icon = ImageField(verbose_name=u'картинка', upload_to=file_path_icons)
     slug = models.SlugField(verbose_name=u'Алиас', help_text=u'уникальное имя на латинице')
+    code = models.CharField(verbose_name=u'код страны', max_length=4)
     order = models.IntegerField(verbose_name=u'порядок сортировки',default=10)
     is_published = models.BooleanField(verbose_name = u'Опубликовано', default=True)
     static_page = models.OneToOneField(Page, verbose_name=u'статическая страница', blank=True, null=True)
@@ -221,6 +222,7 @@ class ParameterType(models.Model):
 
 # жилая недвижимость
 class ResidentialRealEstate(models.Model):
+    country = models.ForeignKey(Country, verbose_name=u'страна')
     region = models.ForeignKey(RE_Region, verbose_name=u'регион')
     rre_type = models.ForeignKey(RRE_Type, verbose_name=u'тип')
     title = models.CharField(verbose_name=u'название', max_length=255)
@@ -228,7 +230,7 @@ class ResidentialRealEstate(models.Model):
     image = ImageField(verbose_name=u'картинка', upload_to=file_path_RE_Images)
     price = models.DecimalField(verbose_name=u'цена', max_digits=10, decimal_places=2)
     description = models.TextField(verbose_name=u'описание')
-    add_parameter_info = models.TextField(verbose_name=u'информация о доп.параметрах')
+    add_parameter_info = models.TextField(verbose_name=u'информация о доп.параметрах', blank=True)
     order = models.IntegerField(verbose_name=u'порядок сортировки',default=10)
     is_published = models.BooleanField(verbose_name = u'опубликовано', default=True)
 
@@ -294,6 +296,7 @@ class RRE_AdditionalParameter(models.Model):
 
 # коммерческая недвижимость
 class CommercialRealEstate(models.Model):
+    country = models.ForeignKey(Country, verbose_name=u'страна')
     region = models.ForeignKey(RE_Region, verbose_name=u'регион')
     cre_type = models.ForeignKey(CRE_Type, verbose_name=u'тип')
     title = models.CharField(verbose_name=u'название', max_length=255)
@@ -381,9 +384,57 @@ class Request(models.Model):
         return u'заявка от %s' % self.name
 
     def a_url(self):
-        a_url = self.url
-        return u'<a href="%s" target="_blank">%s</a>' % (a_url,a_url)
+        a_url = self.url.split('|')
+        return u'<a href="%s" target="_blank">%s</a>' % (a_url[1],a_url[0])
     a_url.allow_tags = True
     a_url.short_description = u'ссылка на объект'
 
+# эксклюхив
+class ExclusiveRealEstate(models.Model):
+    country = models.CharField(verbose_name=u'страна', max_length=255)
+    title = models.CharField(verbose_name=u'название', max_length=255)
+    slug = models.SlugField(verbose_name=u'Алиас', help_text=u'уникальное имя на латинице')
+    image = ImageField(verbose_name=u'картинка', upload_to=file_path_RE_Images)
+    price = models.DecimalField(verbose_name=u'цена', max_digits=10, decimal_places=2)
+    description = models.TextField(verbose_name=u'описание')
+    order = models.IntegerField(verbose_name=u'порядок сортировки',default=10)
+    is_published = models.BooleanField(verbose_name = u'опубликовано', default=True)
 
+    # Managers
+    objects = PublishedManager()
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-order',]
+        verbose_name =_(u'exclusive_estate')
+        verbose_name_plural =_(u'exclusive_estates')
+
+    def get_src_image(self):
+        return self.image.url
+
+    def get_attached_photos(self):
+        return self.exre_attached_photo_set.all()
+
+    def get_str_price(self):
+        return str_price(self.price)
+
+    def get_absolute_url(self):
+        return u'/exclusive/%s/' % self.slug
+
+class EXRE_Attached_photo(models.Model):
+    ex_estate = models.ForeignKey(ExclusiveRealEstate, verbose_name=u'недвижимость')
+    image = ImageField(upload_to=file_path_RE_Images, verbose_name=u'изображение')
+    order = models.IntegerField(u'порядок сортировки', help_text=u'Чем больше число, тем выше располагается элемент', default=10)
+
+    def __unicode__(self):
+        return u'дополнительное изображение №%s' % self.id
+
+    class Meta:
+        ordering = ['-order']
+        verbose_name = _(u'exre_attached_photo')
+        verbose_name_plural = _(u'exre_attached_photos')
+
+    def get_src_image(self):
+        return self.image.url
