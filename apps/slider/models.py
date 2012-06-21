@@ -42,3 +42,32 @@ class SlideItem(models.Model):
             return u'<span></span>'
     admin_photo_preview.allow_tags = True
     admin_photo_preview.short_description = u'Превью'
+
+def file_path_headerSlider(instance, filename):
+    return os.path.join('images','headerSlider',  translify(filename).replace(' ', '_') )
+
+class HeaderSlideItem(models.Model):
+    image = ImageField(verbose_name=u'картинка', upload_to=file_path_headerSlider)
+    order = models.IntegerField(verbose_name=u'порядок сортировки',default=10)
+    is_published = models.BooleanField(verbose_name = u'Опубликовано', default=True)
+
+    # Managers
+    objects = PublishedManager()
+
+    class Meta:
+        verbose_name =_(u'header_slider')
+        verbose_name_plural =_(u'header_sliders')
+        ordering = ['-order',]
+
+    def __unicode__(self):
+        return u'ID фото %s' %self.id
+
+    def admin_photo_preview(self):
+        image = self.image
+        if image:
+            im = get_thumbnail(self.image, '196x47', crop='center', quality=99)
+            return u'<span><img src="%s" width="196" height="47"></span>' %im.url
+        else:
+            return u'<span></span>'
+    admin_photo_preview.allow_tags = True
+    admin_photo_preview.short_description = u'Превью'

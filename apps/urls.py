@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import patterns, include, url
-from apps.utils.items_loader.views import items_loader
 from django.views.decorators.csrf import csrf_exempt
-from apps.realestate.views import show_exclusive_catalog, show_exclusive_item, load_excl_catalog, load_region
+from apps.realestate.views import items_loader, show_exclusive_catalog, show_exclusive_item, load_excl_catalog, load_region
 
 from views import index
 from faq.views import experts,show_expert

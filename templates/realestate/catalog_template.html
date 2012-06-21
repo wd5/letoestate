@@ -1,4 +1,4 @@
-{% load thumbnail items_loader_extras %}
+{% load thumbnail %}
 <div class="catalog load_block">
     {% if catalog %}
         <input type="hidden" id="max_price" value="{{ max_price|floatformat }}">
@@ -7,42 +7,11 @@
 
         {% if type == "residential" %}
 
-            {% if subtype == 'all' and region == 'all' %}
-                {% block_items_loader catalog "Country" "realestate" "rre" loaded_count country_id "get_rre_catalog()" %}
-            {% endif %}
-
-            {% if subtype == 'all' and region != 'all' %}
-                {% block_items_loader catalog "RE_Region" "realestate" "rre" loaded_count region "get_rr_estate()" %}
-            {% endif %}
-
-            {% if subtype != 'all' and region == 'all' %}
-                {% block_items_loader catalog "RRE_Type" "realestate" "rre" loaded_count subtype "get_estate()" %}
-            {% endif %}
-
-            {% if subtype != 'all' and region != 'all' %}
-                {% block_items_loader catalog "RRE_Type" "realestate" "rre" loaded_count subtype condition %}
-            {% endif %}
-
         {% endif %}
 
         {% if type == "commertial" %}
 
-            {% if subtype == 'all' and region == 'all' %}
-                {% block_items_loader catalog "Country" "realestate" "rre" loaded_count country_id "get_cre_catalog()" %}
-            {% endif %}
-
-            {% if subtype == 'all' and region != 'all' %}
-               {% block_items_loader catalog "RE_Region" "realestate" "rre" loaded_count region "get_cr_estate()" %}
-            {% endif %}
-
-            {% if subtype != 'all' and region == 'all' %}
-                {% block_items_loader catalog "CRE_Type" "realestate" "rre" loaded_count subtype "get_estate()" %}
-            {% endif %}
-
-            {% if subtype != 'all' and region != 'all' %}
-                {% block_items_loader catalog "CRE_Type" "realestate" "rre" loaded_count subtype condition %}
-            {% endif %}
-
         {% endif %}
+
     {% endif %}
 </div>

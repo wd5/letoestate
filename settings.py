@@ -20,7 +20,6 @@ INSTALLED_APPS += (
     'apps.faq',
     'apps.slider',
     'apps.realestate',
-    'apps.utils.items_loader',
 
     'sorl.thumbnail',
     #'south',

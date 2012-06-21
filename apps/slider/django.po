@@ -9,3 +9,9 @@ msgstr "запись"
 
 msgid "slider_photos"
 msgstr "записи в слайдере"
+
+msgid "header_slider"
+msgstr "картинка"
+
+msgid "header_sliders"
+msgstr "слайдер в заголовке страниц"

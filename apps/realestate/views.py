@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpRespons
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView, FormView, DetailView, ListView, RedirectView, View
+from django.db.models.loading import get_model
 from apps.realestate.models import Country, ResidentialRealEstate, CRE_Type, CommercialRealEstate, RRE_Type, ParameterType, ExclusiveRealEstate
 from apps.siteblocks.models import News, Settings
 from apps.realestate.forms import RequestForm
@@ -294,9 +295,10 @@ class ExclusiveCatalogView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ExclusiveCatalogView, self).get_context_data(**kwargs)
-        item = self.kwargs.get('slug', None)
 
-        dic = context['catalog'].aggregate(Min('price'), Max('price'))
+        queryset = self.queryset
+
+        dic = queryset.aggregate(Min('price'), Max('price'))
         context['max_price'] = dic['price__max']
         context['min_price'] = dic['price__min']
         try:
@@ -306,15 +308,54 @@ class ExclusiveCatalogView(ListView):
             context['step'] = False
 
         try:
-            loaded_count = Settings.objects.get(name='loaded_count').value
-        except:
+            loaded_count = int(Settings.objects.get(name='loaded_count').value)
+        except Settings.DoesNotExist:
             loaded_count = 5
-        context['loaded_count'] = int(loaded_count)
+
+        result = GetLoadIds(queryset, loaded_count)
+        splited_result = result.split('!')
+        try:
+            remaining_count = int(splited_result[0])
+        except:
+            remaining_count = False
+        next_id_loaded_items = splited_result[1]
+
+        context['catalog'] = queryset[:loaded_count]
+        context['loaded_count'] = remaining_count
         context['countries'] = ExclusiveRealEstate.objects.values('country').distinct().order_by('country')
-        context['catalog'] = context['catalog'][:loaded_count]
+        context['next_id_loaded_items'] = next_id_loaded_items
         return context
 
 show_exclusive_catalog = ExclusiveCatalogView.as_view()
+
+def GetLoadIds(queryset, loaded_count):
+    counter = 0
+    next_id_loaded_items = ''
+    for item in queryset[loaded_count:]:
+        counter = counter + 1
+        div = counter % loaded_count
+        next_id_loaded_items = u'%s,%s' % (next_id_loaded_items, item.id)
+        if div == 0:
+            next_id_loaded_items = u'%s|' % next_id_loaded_items
+
+    if next_id_loaded_items.startswith(',') or next_id_loaded_items.startswith('|'):
+        next_id_loaded_items = next_id_loaded_items[1:]
+    if next_id_loaded_items.endswith(',') or next_id_loaded_items.endswith('|'):
+        next_id_loaded_items = next_id_loaded_items[:-1]
+    next_id_loaded_items = next_id_loaded_items.replace('|,', '|')
+
+    next_block_ids = next_id_loaded_items.split('|')[0]
+    if next_block_ids != '':
+        next_block_ids = next_block_ids.split(',')
+        next_block_ids = len(next_block_ids)
+        if loaded_count > next_block_ids:
+            loaded_count = next_block_ids
+    else:
+        loaded_count = False
+
+    result = u'%s!%s' % (loaded_count, next_id_loaded_items)
+    return result
+
 
 class ShowExclusiveItemView(DetailView):
     slug_field = 'slug'
@@ -327,21 +368,30 @@ show_exclusive_item = ShowExclusiveItemView.as_view()
 class LoadExclCatalogView(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            if 'country' not in request.POST:
+            if 'country' not in request.POST or 'country' not in request.POST and 'price_min' not in request.POST and 'price_max' not in request.POST:
                 return HttpResponseBadRequest()
-            country = request.POST['country']
-            try:
-                loaded_count = Settings.objects.get(name='loaded_count').value
-            except:
-                loaded_count = 5
-            loaded_count = int(loaded_count)
 
-            if country == "all":
-                queryset = ExclusiveRealEstate.objects.published()[:loaded_count]
-                condition = ''
+            if 'price_min' in request.POST and 'price_max' in request.POST:
+                try:
+                    price_min = int(request.POST['price_min'])
+                    price_max = int(request.POST['price_max'])
+                except:
+                    return HttpResponseBadRequest()
             else:
-                queryset = ExclusiveRealEstate.objects.filter(country=country)[:loaded_count]
-                condition = 'filter(country="%s")' % country
+                price_min = False
+                price_max = False
+
+            country = request.POST['country']
+            if country == "all":
+                queryset = ExclusiveRealEstate.objects.published()
+                if price_min and price_max:
+                    queryset = queryset.filter(price__gte=price_min)
+                    queryset = queryset.filter(price__lte=price_max)
+            else:
+                queryset = ExclusiveRealEstate.objects.filter(country=country)
+                if price_min and price_max:
+                    queryset = queryset.filter(price__gte=price_min)
+                    queryset = queryset.filter(price__lte=price_max)
 
             dic = queryset.aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']
@@ -353,15 +403,22 @@ class LoadExclCatalogView(View):
                 step = False
 
             try:
-                loaded_count = Settings.objects.get(name='loaded_count').value
-            except:
+                loaded_count = int(Settings.objects.get(name='loaded_count').value)
+            except Settings.DoesNotExist:
                 loaded_count = 5
-            loaded_count = int(loaded_count)
+
+            result = GetLoadIds(queryset, loaded_count)
+            splited_result = result.split('!')
+            try:
+                remaining_count = int(splited_result[0])
+            except:
+                remaining_count = False
+            next_id_loaded_items = splited_result[1]
 
             items_html = render_to_string(
                 'realestate/excl_catalog_template.html',
-                    {'catalog': queryset[:loaded_count], 'loaded_count': loaded_count, 'request': request,
-                     'condition': condition,
+                    {'catalog': queryset[:loaded_count], 'loaded_count': remaining_count, 'request': request,
+                     'next_id_loaded_items': next_id_loaded_items,
                      'country': country, 'max_price': max_price, 'min_price': min_price, 'step': step}
             )
             return HttpResponse(items_html)
@@ -391,9 +448,58 @@ class LoadRegionAdmin(View):
             regions = curr_country.get_regions()
             html_code = u'<option value=""></option>'
             for region in regions:
-                html_code = u'%s<option value="%s">%s</option>' % (html_code,region.id,region.title)
+                html_code = u'%s<option value="%s">%s</option>' % (html_code, region.id, region.title)
             return HttpResponse(html_code)
         else:
             return HttpResponseBadRequest()
 
 load_region = LoadRegionAdmin.as_view()
+
+class ItemsLoaderView(View):
+    def post(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            return HttpResponseRedirect('/')
+        else:
+            if 'load_ids' not in request.POST or 'm_name' not in request.POST or 'a_name' not in request.POST:
+                return HttpResponseBadRequest()
+
+            load_ids = request.POST['load_ids']
+            app_name = request.POST['a_name']
+            model_name = request.POST['m_name']
+            model = get_model(app_name, model_name)
+
+            load_ids_list = load_ids.split('|')
+            block_id = load_ids_list[0]
+            load_ids = load_ids.replace(block_id, '')
+            block_id = block_id.split(',')
+            if load_ids.startswith(',') or load_ids.startswith('|'):
+                load_ids = load_ids[1:]
+            if load_ids.endswith(',') or load_ids.endswith('|'):
+                load_ids = load_ids[:-1]
+
+            try:
+                next_ids = load_ids_list[1].split(',')
+            except:
+                next_ids = False
+
+            if next_ids:
+                remaining_count = len(next_ids)
+            else:
+                remaining_count = -1
+
+            try:
+                queryset = model.objects.published().filter(id__in=block_id)
+            except model.DoesNotExist:
+                return HttpResponseBadRequest()
+
+            response = HttpResponse()
+            load_template = 'items_loader/rre_load_template.html'
+            items_html = render_to_string(
+                'items_loader/base_loader.html',
+                    {'items': queryset, 'load_template': load_template, 'remaining_count': remaining_count,
+                     'load_ids': load_ids, }
+            )
+            response.content = items_html
+            return response
+
+items_loader = ItemsLoaderView.as_view()

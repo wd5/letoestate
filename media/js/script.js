@@ -11,7 +11,7 @@ $(function () {
 	});
 	$('.specs ul').cycle({fx:'fade', ctrls:'.specs_ctrls span'});
 
-    //$('div.pic').ite
+    SlideHeader();
 
     $('.fancybox').fancybox();
 
@@ -112,8 +112,63 @@ $(function () {
         });
     });
 
+    $('.load_items').live('click',function(){
+
+        var el = $(this);
+        var parent = $(this).parents('.load_block');
+        $.ajax({
+            url: "/load_items/",
+            data: {
+                load_ids: parent.find('#loaded_ids').val(),
+                m_name: parent.find('#m_name').val(),
+                a_name: parent.find('#a_name').val()
+            },
+            type: "POST",
+            success: function(data) {
+
+                parent.append(data)
+                parent.find('.loaded:eq(0)').fadeIn("fast", function (){ //появление по очереди
+                        $(this).next().fadeIn("fast", arguments.callee);
+                    });
+                //parent.find('.loaded').fadeIn('slow')  //простое появление
+                parent.find('#loaded_ids').val(parent.find('#new_load_ids').val())
+                parent.find('div').removeClass('loaded')
+                parent.find('.show_more').appendTo(parent)
+                var rctxt = parent.find('#remaining_count_text').val()
+                var rc = parent.find('#remaining_count').val()
+                if (rctxt!=undefined)
+                    {el.html(rctxt)}
+                if (rc<=0)
+                    {parent.find('.show_more').remove()}
+                parent.find('#remaining_count_text').remove()
+                parent.find('#new_load_ids').remove()
+                parent.find('#remaining_count').remove()
+
+            }
+        });
+
+        return false;
+    });
 
 });
+
+function SlideHeader()
+{
+    var delay = 3000, fade = 1000; // tweak-able
+    var banners = $('.slider_img');
+    var len = banners.length;
+    var i = 0;
+
+    setTimeout(cycle, delay); // <-- start
+
+    function cycle() {
+        $(banners[i%len]).fadeOut(fade, function() {
+            $(banners[++i%len]).fadeIn(fade, function() { // mod ftw
+                setTimeout(cycle, delay);
+            });
+        });
+    }
+}
 
 function SetPriceSlider(start, end, step, disabl)
 {
@@ -131,6 +186,21 @@ function SetPriceSlider(start, end, step, disabl)
             vals = $(this).slider( "option", "values" )
             price_label_l.html(vals[0]);
             price_label_r.html(vals[1]);
+            $.ajax({
+                url: "/exclusive/load_catalog/",
+                data: {
+                    country:$("#country").val(),
+                    price_min:vals[0],
+                    price_max:vals[1]
+                },
+                type: "POST",
+                success: function(data) {
+                    $('.catalog').replaceWith(data);
+                },
+                error:function(jqXHR,textStatus,errorThrown) {
+                    $('.catalog').replaceWith(jqXHR.responseText);
+                }
+            });
         }
     });
 }
