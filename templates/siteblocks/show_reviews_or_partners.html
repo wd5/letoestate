@@ -44,8 +44,8 @@
                     </div>
 
                     <div class="descr">
-                        <span class="name">{{ partner.title }}</span>
-                        <span class="description">{{ partner.description }}</span>
+                        <h3 class="name">{{ partner.title }}</h3>
+                        <span class="description">{{ partner.description|safe }}</span>
                         <a href="http://{{ partner.url }}" target="_blank" class="link">{{ partner.url }}</a>
                     </div>
 

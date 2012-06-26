@@ -11,6 +11,34 @@ from apps.siteblocks.models import News, Settings
 from apps.realestate.forms import RequestForm
 from django.core.mail.message import EmailMessage
 
+def GetLoadIds(queryset, loaded_count):
+    counter = 0
+    next_id_loaded_items = ''
+    for item in queryset[loaded_count:]:
+        counter = counter + 1
+        div = counter % loaded_count
+        next_id_loaded_items = u'%s,%s' % (next_id_loaded_items, item.id)
+        if div == 0:
+            next_id_loaded_items = u'%s|' % next_id_loaded_items
+
+    if next_id_loaded_items.startswith(',') or next_id_loaded_items.startswith('|'):
+        next_id_loaded_items = next_id_loaded_items[1:]
+    if next_id_loaded_items.endswith(',') or next_id_loaded_items.endswith('|'):
+        next_id_loaded_items = next_id_loaded_items[:-1]
+    next_id_loaded_items = next_id_loaded_items.replace('|,', '|')
+
+    next_block_ids = next_id_loaded_items.split('|')[0]
+    if next_block_ids != '':
+        next_block_ids = next_block_ids.split(',')
+        next_block_ids = len(next_block_ids)
+        if loaded_count > next_block_ids:
+            loaded_count = next_block_ids
+    else:
+        loaded_count = False
+
+    result = u'%s!%s' % (loaded_count, next_id_loaded_items)
+    return result
+
 class ShowCatalogView(DetailView):
     model = Country
     template_name = 'realestate/show_catalog.html'
@@ -18,7 +46,6 @@ class ShowCatalogView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ShowCatalogView, self).get_context_data(**kwargs)
-        # Residential
         context['regions'] = self.object.get_regions()
         context['additional_parameters'] = ParameterType.objects.published()
         item_type = self.kwargs.get('type', 'residential')
@@ -46,12 +73,21 @@ class ShowCatalogView(DetailView):
             context['step'] = False
 
         try:
-            loaded_count = Settings.objects.get(name='loaded_count').value
+            loaded_count = int(Settings.objects.get(name='loaded_count').value)
         except:
             loaded_count = 5
-        context['loaded_count'] = int(loaded_count)
-        context['catalog'] = context['catalog'][:loaded_count]
+        queryset = context['catalog']
+        result = GetLoadIds(queryset, loaded_count)
+        splited_result = result.split('!')
+        try:
+            remaining_count = int(splited_result[0])
+        except:
+            remaining_count = False
+        next_id_loaded_items = splited_result[1]
 
+        context['loaded_count'] = remaining_count
+        context['catalog'] = context['catalog'][:loaded_count]
+        context['next_id_loaded_items'] = next_id_loaded_items
         return context
 
 show_residential_catalog = csrf_protect(ShowCatalogView.as_view())
@@ -201,6 +237,16 @@ class LoadCatalogView(View):
             if 'type' not in request.POST or 'subtype' not in request.POST or 'region' not in request.POST or 'country_id' not in request.POST:
                 return HttpResponseBadRequest()
 
+            if 'price_min' in request.POST and 'price_max' in request.POST:
+                try:
+                    price_min = int(request.POST['price_min'])
+                    price_max = int(request.POST['price_max'])
+                except:
+                    return HttpResponseBadRequest()
+            else:
+                price_min = False
+                price_max = False
+
             country_id = request.POST['country_id']
             type = request.POST['type']
             subtype = request.POST['subtype']
@@ -220,17 +266,11 @@ class LoadCatalogView(View):
                     subtype = int(subtype)
                 except ValueError:
                     return HttpResponseBadRequest()
-            if subtype != 'all' and region != 'all':
-                condition = u'get_estate().filter(region=%s)' % region
-            else:
-                condition = False
 
             if type == "residential":
                 country = Country.objects.get(pk=country_id)
                 queryset = country.get_rre_catalog()
-
                 #queryset = ResidentialRealEstate.objects.published().filter()
-
                 if subtype == "all":
                     if region == "all":
                         pass
@@ -244,7 +284,6 @@ class LoadCatalogView(View):
             elif type == "commertial":
                 country = Country.objects.get(pk=country_id)
                 queryset = country.get_cre_catalog()
-
                 #queryset = CommercialRealEstate.objects.published().filter()
                 if subtype == "all":
                     if region == "all":
@@ -259,6 +298,10 @@ class LoadCatalogView(View):
             else:
                 return HttpResponseBadRequest('Произошла ошибка. Приносим извинения.')
 
+            if price_min and price_max:
+                queryset = queryset.filter(price__gte=price_min)
+                queryset = queryset.filter(price__lte=price_max)
+
             dic = queryset.aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']
             min_price = dic['price__min']
@@ -269,16 +312,23 @@ class LoadCatalogView(View):
                 step = False
 
             try:
-                loaded_count = Settings.objects.get(name='loaded_count').value
+                loaded_count = int(Settings.objects.get(name='loaded_count').value)
             except:
                 loaded_count = 5
-            loaded_count = int(loaded_count)
+
+            result = GetLoadIds(queryset, loaded_count)
+            splited_result = result.split('!')
+            try:
+                remaining_count = int(splited_result[0])
+            except:
+                remaining_count = False
+            next_id_loaded_items = splited_result[1]
 
             items_html = render_to_string(
                 'realestate/catalog_template.html',
-                    {'catalog': queryset[:loaded_count], 'loaded_count': loaded_count, 'request': request,
-                     'type': type, 'region': region, 'subtype': subtype, 'country_id': country_id,
-                     'condition': condition,
+                    {'catalog': queryset[:loaded_count], 'loaded_count': remaining_count, 'request': request,
+                     'type': type, 'region': region, 'subtype': subtype,
+                     'next_id_loaded_items': next_id_loaded_items,
                      'max_price': max_price, 'min_price': min_price, 'step': step}
             )
             return HttpResponse(items_html)
@@ -328,35 +378,6 @@ class ExclusiveCatalogView(ListView):
 
 show_exclusive_catalog = ExclusiveCatalogView.as_view()
 
-def GetLoadIds(queryset, loaded_count):
-    counter = 0
-    next_id_loaded_items = ''
-    for item in queryset[loaded_count:]:
-        counter = counter + 1
-        div = counter % loaded_count
-        next_id_loaded_items = u'%s,%s' % (next_id_loaded_items, item.id)
-        if div == 0:
-            next_id_loaded_items = u'%s|' % next_id_loaded_items
-
-    if next_id_loaded_items.startswith(',') or next_id_loaded_items.startswith('|'):
-        next_id_loaded_items = next_id_loaded_items[1:]
-    if next_id_loaded_items.endswith(',') or next_id_loaded_items.endswith('|'):
-        next_id_loaded_items = next_id_loaded_items[:-1]
-    next_id_loaded_items = next_id_loaded_items.replace('|,', '|')
-
-    next_block_ids = next_id_loaded_items.split('|')[0]
-    if next_block_ids != '':
-        next_block_ids = next_block_ids.split(',')
-        next_block_ids = len(next_block_ids)
-        if loaded_count > next_block_ids:
-            loaded_count = next_block_ids
-    else:
-        loaded_count = False
-
-    result = u'%s!%s' % (loaded_count, next_id_loaded_items)
-    return result
-
-
 class ShowExclusiveItemView(DetailView):
     slug_field = 'slug'
     model = ExclusiveRealEstate
@@ -384,14 +405,12 @@ class LoadExclCatalogView(View):
             country = request.POST['country']
             if country == "all":
                 queryset = ExclusiveRealEstate.objects.published()
-                if price_min and price_max:
-                    queryset = queryset.filter(price__gte=price_min)
-                    queryset = queryset.filter(price__lte=price_max)
             else:
                 queryset = ExclusiveRealEstate.objects.filter(country=country)
-                if price_min and price_max:
-                    queryset = queryset.filter(price__gte=price_min)
-                    queryset = queryset.filter(price__lte=price_max)
+
+            if price_min and price_max:
+                queryset = queryset.filter(price__gte=price_min)
+                queryset = queryset.filter(price__lte=price_max)
 
             dic = queryset.aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']

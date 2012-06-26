@@ -721,6 +721,11 @@ span.filter_curr a {
 	font-weight: bold;
 	margin: 0 0 10px;
 }
+.email, .phonenumber {
+	display: block;
+	font-size: 14px;
+	font-weight: bold;
+}
 /*/experts*/
 
 /*text-page*/

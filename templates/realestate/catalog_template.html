@@ -1,17 +1,53 @@
-{% load thumbnail %}
+{% load thumbnail pytils_numeral %}
+{% if catalog %}
 <div class="catalog load_block">
-    {% if catalog %}
+{#        {{ region }} - {{ subtype }} - {{ loaded_count }} - {{ country_id }}#}
+    <input type="hidden" id="max_price" value="{{ max_price|floatformat }}">
+    <input type="hidden" id="min_price" value="{{ min_price|floatformat }}">
+
+    <input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}">
+    {% if type == "residential" %}
+        <input type="hidden" id="m_name" value="ResidentialRealEstate">
+    {% endif %}
+    {% if type == "commertial" %}
+        <input type="hidden" id="m_name" value="CommercialRealEstate">
+    {% endif %}
+    <input type="hidden" id="a_name" value="realestate">
+
+    {% for item in catalog %}
+            <div class="item">
+               <div class="item_img">
+                   {% thumbnail item.image "156x123" crop="center" as im %}
+                       <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                   {% endthumbnail %}
+                   <a href="{{ item.get_absolute_url }}" class="item_img_fr"></a></div>
+               <div class="item_cat_des">
+                   <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
+                   <div class="item_price">{{ item.get_str_price }} EUR</div>
+                   <p>{{ item.description|truncatewords:33 }}</p>
+               </div>
+           </div>
+    {% endfor %}
+
+    {% if loaded_count %}
+        <div class="show_more">
+            <a href="#" class="load_items">Ещё <span class="cnt">{{ loaded_count }}</span> запис{{ loaded_count|choose_plural:"ь,и,ей" }}</a>
+        </div>
+    {% endif %}
+
+</div>
+{% else %}
+    <div class="catalog load_block">
         <input type="hidden" id="max_price" value="{{ max_price|floatformat }}">
         <input type="hidden" id="min_price" value="{{ min_price|floatformat }}">
-{#        {{ region }} - {{ subtype }} - {{ loaded_count }} - {{ country_id }}#}
 
-        {% if type == "residential" %}
-
+        <input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}">
+        {% if item_type == "residential" %}
+            <input type="hidden" id="m_name" value="ResidentialRealEstate">
         {% endif %}
-
-        {% if type == "commertial" %}
-
+        {% if item_type == "commertial" %}
+            <input type="hidden" id="m_name" value="CommercialRealEstate">
         {% endif %}
-
-    {% endif %}
-</div>
+        <input type="hidden" id="a_name" value="realestate">
+    </div>
+{% endif %}

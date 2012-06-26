@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail faq_extras siteblocks_extras pages_extras %}
+{% load thumbnail pytils_numeral faq_extras siteblocks_extras pages_extras %}
 
 {% if page.title %}
     {% block title %}
@@ -41,15 +41,12 @@
         <div class="filter_slider">
             <div class="filter_name">Цена (EUR)</div>
             <div class="filter_price_pl">
-                <div class="sort_price_slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="price_slider">
+                <div class="sort_price_slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="catalog_price_slider">
                     <div style="left: 0%;" class="slider_label_l">{{ min_price|floatformat }}</div>
                     <div style="right: 0%;" class="slider_label_r">{{ max_price|floatformat }}</div>
-{#                    <div class="ui-slider-range ui-widget-header" style="left: 25%; width: 50%; "></div>#}
-{#                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 25%; "></a>#}
-{#                    <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 75%; "></a>#}
                 </div>
                 {% if step %}
-                    <script type="text/javascript">SetPriceSlider({{ min_price|floatformat }},{{ max_price|floatformat }},{{ step|floatformat }},false);</script>
+                    <script type="text/javascript">SetCatalogPriceSlider({{ min_price|floatformat }},{{ max_price|floatformat }},{{ step|floatformat }},false);</script>
                 {% endif %}
             </div>
         </div>
@@ -73,20 +70,36 @@
     </div><!-- /filters -->
 
     <div class="catalog load_block">
+
+        <input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}">
+        {% if item_type == "residential" %}
+            <input type="hidden" id="m_name" value="ResidentialRealEstate">
+        {% endif %}
+        {% if item_type == "commertial" %}
+            <input type="hidden" id="m_name" value="CommercialRealEstate">
+        {% endif %}
+        <input type="hidden" id="a_name" value="realestate">
+
         {% for item in catalog %}
-            <div class="item">
-                <div class="item_img">
-                    {% thumbnail item.image "156x123" crop="center" as im %}
-                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
-                    {% endthumbnail %}
-                    <a href="{{ item.get_absolute_url }}" class="item_img_fr"></a></div>
-                <div class="item_cat_des">
-                    <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
-                    <div class="item_price">{{ item.get_str_price }} EUR</div>
-                    <p>{{ item.description|truncatewords:33 }}</p>
-                </div>
-            </div>
+                <div class="item">
+                   <div class="item_img">
+                       {% thumbnail item.image "156x123" crop="center" as im %}
+                           <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                       {% endthumbnail %}
+                       <a href="{{ item.get_absolute_url }}" class="item_img_fr"></a></div>
+                   <div class="item_cat_des">
+                       <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
+                       <div class="item_price">{{ item.get_str_price }} EUR</div>
+                       <p>{{ item.description|truncatewords:33 }}</p>
+                   </div>
+               </div>
         {% endfor %}
+
+        {% if loaded_count %}
+            <div class="show_more">
+                <a href="#" class="load_items">Ещё <span class="cnt">{{ loaded_count }}</span> запис{{ loaded_count|choose_plural:"ь,и,ей" }}</a>
+            </div>
+        {% endif %}
     </div><!-- /catalog -->
 
 {% endblock %}

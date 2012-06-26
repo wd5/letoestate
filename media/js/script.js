@@ -205,6 +205,44 @@ function SetPriceSlider(start, end, step, disabl)
     });
 }
 
+function SetCatalogPriceSlider(start, end, step, disabl)
+{
+    var price_label_l = $('.filter_price_pl').find('.slider_label_l')
+    var price_label_r = $('.filter_price_pl').find('.slider_label_r')
+
+    $('#catalog_price_slider').slider({
+        disabled: disabl,
+        range: true,
+        step: parseInt(step),
+        min: parseInt(start),
+        max: parseInt(end),
+        values:[parseInt(start),parseInt(end)],
+        change: function(event, ui) {
+            vals = $(this).slider( "option", "values" )
+            price_label_l.html(vals[0]);
+            price_label_r.html(vals[1]);
+            $.ajax({
+                url: "/countries/load_catalog/",
+                data: {
+                    country_id:$('#country_id').val(),
+                    type:$('#re_type').val(),
+                    subtype:$('.filter_curr>.check_subtype').attr('name'),
+                    region:$('.filter_curr>.check_region').attr('name'),
+                    price_min:vals[0],
+                    price_max:vals[1]
+                },
+                type: "POST",
+                success: function(data) {
+                    $('.catalog').replaceWith(data);
+                },
+                error:function(jqXHR,textStatus,errorThrown) {
+                    $('.catalog').replaceWith(jqXHR.responseText);
+                }
+            });
+        }
+    });
+}
+
 function LoadCatalog(type, subtype, region, country_id)
 {
     $.ajax({
@@ -225,19 +263,18 @@ function LoadCatalog(type, subtype, region, country_id)
 
             if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
                 {
-                    if (maxp!=NaN)
-                        {SetPriceSlider(0,100,1,true);
-                        price_label_r.html(maxp);}
+                    if ((maxp!=NaN) && (maxp!=''))
+                        {price_label_r.html(maxp);}
                     else
-                        {SetPriceSlider(0,100,1,true);
-                        price_label_r.html(100);}
+                        {price_label_r.html(100);}
                     price_label_l.html(0);
+                    SetCatalogPriceSlider(0,100,1,true);
                 }
             else
                 {
                     len = maxp - minp
                     stp = len/10
-                    SetPriceSlider(minp,maxp,stp,false);
+                    SetCatalogPriceSlider(minp,maxp,stp,false);
                     price_label_l.html(minp);
                     price_label_r.html(maxp);
                 }
