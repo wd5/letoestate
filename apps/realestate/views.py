@@ -39,6 +39,7 @@ def GetLoadIds(queryset, loaded_count):
     result = u'%s!%s' % (loaded_count, next_id_loaded_items)
     return result
 
+
 class ShowCatalogView(DetailView):
     model = Country
     template_name = 'realestate/show_catalog.html'
@@ -85,6 +86,48 @@ class ShowCatalogView(DetailView):
             remaining_count = False
         next_id_loaded_items = splited_result[1]
 
+        parameters = ''
+        for item in context['additional_parameters']:
+            value_max = 0
+            value_min = 10000000
+            for estate in context['catalog']:
+                estate_parameters_set = estate.get_parameters()
+                if estate_parameters_set:
+                    try:
+                        curr_param_value = estate_parameters_set.get(type=item.id).value
+                        if curr_param_value > value_max:
+                            value_max = curr_param_value
+                        if curr_param_value < value_min and curr_param_value != 0:
+                            value_min = curr_param_value
+                    except:
+                        pass
+            if value_min==10000000: value_min = 0
+            item.max_val=value_max
+            item.min_val=value_min
+            if value_max==value_min or value_max<value_min:
+                disabled=True
+                item.slider_disable='true'
+                item.max_val=1
+                item.min_val=0
+                item.step=1
+            elif value_max>value_min:
+                disabled=False
+                add_p_len = value_max - value_min
+                add_p_step = add_p_len / 10
+                if add_p_step<1:
+                    add_p_step=1
+                item.step=round(add_p_step)
+                item.slider_disable='false'
+            parameters = u'%s%s,%s,%s,%s|' % (parameters, item.id, value_min, value_max, disabled)
+
+        if parameters.startswith(',') or parameters.startswith('|'):
+            parameters = parameters[1:]
+        if parameters.endswith(',') or parameters.endswith('|'):
+            parameters = parameters[:-1]
+        parameters = parameters.replace('|,', '|')
+
+
+        context['additional_parameters_string'] = parameters
         context['loaded_count'] = remaining_count
         context['catalog'] = context['catalog'][:loaded_count]
         context['next_id_loaded_items'] = next_id_loaded_items
@@ -247,6 +290,14 @@ class LoadCatalogView(View):
                 price_min = False
                 price_max = False
 
+            if 'add_parameters_values' in request.POST:
+                try:
+                    add_parameters_values = request.POST['add_parameters_values']
+                except:
+                    return HttpResponseBadRequest()
+            else:
+                add_parameters_values = False
+
             country_id = request.POST['country_id']
             type = request.POST['type']
             subtype = request.POST['subtype']
@@ -301,6 +352,12 @@ class LoadCatalogView(View):
             if price_min and price_max:
                 queryset = queryset.filter(price__gte=price_min)
                 queryset = queryset.filter(price__lte=price_max)
+
+            if add_parameters_values:
+                for item in add_parameters_values.split('|'):
+                    param = item.split(',')
+                    if param[3]=='False':
+                        queryset = queryset.filter()
 
             dic = queryset.aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']

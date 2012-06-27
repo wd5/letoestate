@@ -285,7 +285,7 @@ class RRE_AdditionalParameter(models.Model):
     value = models.DecimalField(verbose_name=u'значение', max_digits=10, decimal_places=2)
 
     def __unicode__(self):
-        return u'%s' % ''
+        return u'%s %s' % (self.type.title,self.value)
 
     def get_str_value(self):
         return str_price(self.value)
@@ -359,7 +359,7 @@ class CRE_AdditionalParameter(models.Model):
     value = models.DecimalField(verbose_name=u'значение', max_digits=10, decimal_places=2)
 
     def __unicode__(self):
-        return u'%s' % ''
+        return u'%s %s' % (self.type.title,self.value)
 
     class Meta:
         verbose_name = _(u'cre_additional_parameter')

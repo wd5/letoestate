@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.views.generic import TemplateView, FormView, DetailView, ListView, RedirectView, View
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -26,3 +27,13 @@ def page(request, url):
 @csrf_exempt
 def static_page(request, template):
     return direct_to_template(request, template, locals())
+
+class SiteMapView(TemplateView):
+    template_name = 'pages/site_map.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SiteMapView, self).get_context_data(**kwargs)
+        context['pages'] = Page.objects.filter(is_published=True)
+        return context
+
+site_map = SiteMapView.as_view()

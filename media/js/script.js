@@ -89,12 +89,12 @@ $(function () {
                 if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
                     {
                         if (maxp!=NaN)
-                            {SetPriceSlider(0,100,1,true);
-                            price_label_r.html(maxp);}
+                            {SetPriceSlider(0,0,1,true);
+                            price_label_r.html('-');}
                         else
-                            {SetPriceSlider(0,100,1,true);
-                            price_label_r.html(100);}
-                        price_label_l.html(0);
+                            {SetPriceSlider(0,0,1,true);
+                            price_label_r.html('-');}
+                        price_label_l.html('-');
                     }
                 else
                     {
@@ -219,8 +219,12 @@ function SetCatalogPriceSlider(start, end, step, disabl)
         values:[parseInt(start),parseInt(end)],
         change: function(event, ui) {
             vals = $(this).slider( "option", "values" )
-            price_label_l.html(vals[0]);
-            price_label_r.html(vals[1]);
+            if ((vals[0]==0) && (vals[1]==0))
+                {price_label_l.html('-');
+                price_label_r.html('-');}
+            else
+                {price_label_l.html(vals[0]);
+                price_label_r.html(vals[1]);}
             $.ajax({
                 url: "/countries/load_catalog/",
                 data: {
@@ -230,6 +234,59 @@ function SetCatalogPriceSlider(start, end, step, disabl)
                     region:$('.filter_curr>.check_region').attr('name'),
                     price_min:vals[0],
                     price_max:vals[1]
+                },
+                type: "POST",
+                success: function(data) {
+                    $('.catalog').replaceWith(data);
+                },
+                error:function(jqXHR,textStatus,errorThrown) {
+                    $('.catalog').replaceWith(jqXHR.responseText);
+                }
+            });
+        }
+    });
+}
+
+function SetAdditionalSlider(id, start, end, step, disabl)
+{
+    $('#add_slider_'+id).slider({
+        disabled: disabl,
+        range: true,
+        step: parseInt(step),
+        min: parseInt(start),
+        max: parseInt(end),
+        values:[parseInt(start),parseInt(end)],
+        change: function(event, ui) {
+            price_vals = $('#catalog_price_slider').slider( "option", "values" )
+            var slider_label_l = $(this).find('.slider_label_l')
+            var slider_label_r = $(this).find('.slider_label_r')
+            vals = $(this).slider( "option", "values" )
+            slider_label_l.html(vals[0]);
+            slider_label_r.html(vals[1]);
+            var parameters = $('#add_parameters_values').val()
+            parameters_array = parameters.split('|');
+            length = parameters_array.length
+            for (var i = 0; i <= length-1; i++)
+                {
+                    part = parameters_array[i].split(',')
+                    if (part[0]==id)
+                        {
+                            part[1]=vals[0]
+                            part[2]=vals[1]
+                        }
+                    parameters_array[i] = part.join(',')
+                }
+            $('#add_parameters_values').val(parameters_array.join('|'))
+            $.ajax({
+                url: "/countries/load_catalog/",
+                data: {
+                    country_id:$('#country_id').val(),
+                    type:$('#re_type').val(),
+                    subtype:$('.filter_curr>.check_subtype').attr('name'),
+                    region:$('.filter_curr>.check_region').attr('name'),
+                    price_min:price_vals[0],
+                    price_max:price_vals[1],
+                    add_parameters_values:$('#add_parameters_values').val()
                 },
                 type: "POST",
                 success: function(data) {
@@ -263,15 +320,17 @@ function LoadCatalog(type, subtype, region, country_id)
 
             if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
                 {
+
                     if ((maxp!=NaN) && (maxp!=''))
-                        {price_label_r.html(maxp);}
+                        {price_label_r.html('-');}
                     else
-                        {price_label_r.html(100);}
-                    price_label_l.html(0);
-                    SetCatalogPriceSlider(0,100,1,true);
+                        {price_label_r.html('-');}
+                    price_label_l.html('-');
+                    SetCatalogPriceSlider(0,0,1,true);
                 }
             else
                 {
+
                     len = maxp - minp
                     stp = len/10
                     SetCatalogPriceSlider(minp,maxp,stp,false);

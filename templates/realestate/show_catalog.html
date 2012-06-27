@@ -51,18 +51,19 @@
             </div>
         </div>
         <div class="filter_show_more"><a href="#">Дополнительные параметры</a></div>
+        <input type="hidden" id="add_parameters_values" value="{{ additional_parameters_string }}">
         <div class="filter_exts">
             {% for add_parameter in additional_parameters %}
                 <div class="filter_ext">
                     <div class="filter_name">{{ add_parameter.title }}</div>
                     <div class="filter">
-                        <div class="filter_ ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
-                            <div style="left: 0%;" class="slider_label_l">490</div>
-                            <div style="right: 0%;" class="slider_label_r">34500</div>
-                            <div class="ui-slider-range ui-widget-header" style="left: 25%; width: 50%; "></div>
-                            <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 25%; "></a>
-                            <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 75%; "></a>
+                        <div class="filter_ ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="add_slider_{{ add_parameter.id }}">
+                            <div style="left: 0%;" class="slider_label_l">{% if add_parameter.slider_disable == 'false' %}{{ add_parameter.min_val|floatformat }}{% else %}-{% endif %}</div>
+                            <div style="right: 0%;" class="slider_label_r">{% if add_parameter.slider_disable == 'false' %}{{ add_parameter.max_val|floatformat }}{% else %}-{% endif %}</div>
                         </div>
+                        <script type="text/javascript">
+                            SetAdditionalSlider({{ add_parameter.id }},{{ add_parameter.min_val|floatformat }},{{ add_parameter.max_val|floatformat }},{{ add_parameter.step|floatformat }},{{ add_parameter.slider_disable }});
+                        </script>
                     </div>
                 </div>
             {% endfor %}

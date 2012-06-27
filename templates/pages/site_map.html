@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load thumbnail mptt_tags faq_extras siteblocks_extras pages_extras %}
+
+{% if page.title %}
+    {% block title %}
+        Карта сайта &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="text">
+        <h1>Карта сайта</h1>
+        {% if pages %}
+            {% recursetree pages %}
+                <div class="site_map_item">
+                    <a href="{{ node.url }}">{{ node.title }}</a>
+                </div>
+                {% if not node.is_leaf_node %}
+                    <div class="site_map_item lvl" style="margin-left:20px;">
+                        {{ children }}
+                    </div>
+                {% endif %}
+            {% endrecursetree %}
+        {% endif %}
+    </div>
+{% endblock %}

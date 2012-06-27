@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from apps.realestate.views import items_loader, show_exclusive_catalog, show_exclusive_item, load_excl_catalog, load_region
 
 from views import index
+from apps.pages.views import site_map
 from faq.views import experts,show_expert
 from apps.siteblocks.views import show_reviews, show_parnters
 
@@ -22,6 +23,7 @@ urlpatterns = patterns('',
     (r'^faq/', include('apps.faq.urls')),
     (r'^news/', include('apps.siteblocks.urls')),
     (r'^countries/', include('apps.realestate.urls')),
+    (r'^site_map/', site_map),
 )
 
 
