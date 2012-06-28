@@ -20,6 +20,7 @@ INSTALLED_APPS += (
     'apps.faq',
     'apps.slider',
     'apps.realestate',
+    'django.contrib.sitemaps',
 
     'sorl.thumbnail',
     #'south',

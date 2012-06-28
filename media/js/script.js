@@ -26,7 +26,7 @@ $(function () {
             type: "POST",
             success: function(data) {
                 if (data=='success')
-                    {$('.form').replaceWith("Спасибо за вопрос, мы постараемся ответить на него в самое ближайшее время!");}
+                    {$('.form').replaceWith("<div style='height: 150px;text-align: center;padding-top: 75px;'>Спасибо за вопрос, мы постараемся ответить на него в самое ближайшее время!</div>");}
                 else{
                     $('.form').replaceWith(data);
                 }
@@ -47,7 +47,7 @@ $(function () {
             type: "POST",
             success: function(data) {
                 if (data=='success')
-                    {$('.form').replaceWith("Спасибо за заявку, мы свяжемся с вами в самое ближайшее время!");}
+                    {$('.form').replaceWith("<div style='height: 150px;text-align: center;padding-top: 75px;'>Спасибо за заявку, мы свяжемся с вами в самое ближайшее время!</div>");}
                 else{
                     $('.form').replaceWith(data);
                 }

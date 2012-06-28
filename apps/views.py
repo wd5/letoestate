@@ -3,7 +3,6 @@ from django.views.generic import TemplateView
 from apps.siteblocks.models import Settings
 from apps.slider.models import SlideItem
 
-
 class IndexView(TemplateView):
     template_name = 'index.html'
 

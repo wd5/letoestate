@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView, FormView, DetailView, ListView, RedirectView, View
 from django.db.models.loading import get_model
-from apps.realestate.models import Country, ResidentialRealEstate, CRE_Type, CommercialRealEstate, RRE_Type, ParameterType, ExclusiveRealEstate
+from apps.realestate.models import Country, ResidentialRealEstate, CRE_Type, CommercialRealEstate, RRE_Type, ParameterType, ExclusiveRealEstate, RRE_AdditionalParameter, CRE_AdditionalParameter
 from apps.siteblocks.models import News, Settings
 from apps.realestate.forms import RequestForm
 from django.core.mail.message import EmailMessage
@@ -357,7 +357,17 @@ class LoadCatalogView(View):
                 for item in add_parameters_values.split('|'):
                     param = item.split(',')
                     if param[3]=='False':
-                        queryset = queryset.filter()
+                        if type == "residential":
+                            params = RRE_AdditionalParameter.objects.filter(type=param[0])
+                            params = params.filter(value__gte=param[1])
+                            params = params.filter(value__lte=param[2])
+                            estate_ids = params.values('rr_estate_id')
+                        elif type == "commertial":
+                            params = CRE_AdditionalParameter.objects.filter(type=param[0])
+                            params = params.filter(value__gte=param[1])
+                            params = params.filter(value__lte=param[2])
+                            estate_ids = params.values('cr_estate_id')
+                        queryset = queryset.filter(id__in=estate_ids)
 
             dic = queryset.aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']
