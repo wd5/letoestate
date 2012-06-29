@@ -231,6 +231,7 @@ class ResidentialRealEstate(models.Model):
     price = models.DecimalField(verbose_name=u'цена', max_digits=10, decimal_places=2)
     description = models.TextField(verbose_name=u'описание')
     add_parameter_info = models.TextField(verbose_name=u'информация о доп.параметрах', blank=True)
+    serial_number = models.CharField(verbose_name=u'код объекта', max_length=45, blank=True)
     order = models.IntegerField(verbose_name=u'порядок сортировки',default=10)
     is_published = models.BooleanField(verbose_name = u'опубликовано', default=True)
 
@@ -262,6 +263,16 @@ class ResidentialRealEstate(models.Model):
 
     def get_absolute_url(self):
         return u'%scatalog/residential/%s/' % (self.region.country.get_absolute_url(),self.slug)
+
+    def save(self, force_insert=False, force_update=False, using=None):
+        if not self.serial_number:
+            code = self.country.code
+            count = self.country.get_rre_catalog().count()
+            self.serial_number = u'%s%s' % (code,count+1)
+
+        if force_insert and force_update:
+            raise ValueError("Cannot force both insert and updating in model saving.")
+        self.save_base(using=using, force_insert=force_insert, force_update=force_update)
 
 class RRE_Attached_photo(models.Model):
     rr_estate = models.ForeignKey(ResidentialRealEstate, verbose_name=u'недвижимость')
@@ -305,6 +316,7 @@ class CommercialRealEstate(models.Model):
     price = models.DecimalField(verbose_name=u'цена', max_digits=10, decimal_places=2)
     description = models.TextField(verbose_name=u'описание')
     add_parameter_info = models.TextField(verbose_name=u'информация о доп.параметрах')
+    serial_number = models.CharField(verbose_name=u'код объекта', max_length=45, blank=True)
     order = models.IntegerField(verbose_name=u'порядок сортировки',default=10)
     is_published = models.BooleanField(verbose_name = u'опубликовано', default=True)
 
@@ -335,7 +347,17 @@ class CommercialRealEstate(models.Model):
         return self.cre_additionalparameter_set.all()
 
     def get_absolute_url(self):
-        return u'%scatalog/commertial/%s/' % (self.region.country.get_absolute_url(),self.slug)
+        return u'%scatalog/commercial/%s/' % (self.region.country.get_absolute_url(),self.slug)
+
+    def save(self, force_insert=False, force_update=False, using=None):
+        if not self.serial_number:
+            code = self.country.code
+            count = self.country.get_rre_catalog().count()
+            self.serial_number = u'%s%s' % (code,count+1)
+
+        if force_insert and force_update:
+            raise ValueError("Cannot force both insert and updating in model saving.")
+        self.save_base(using=using, force_insert=force_insert, force_update=force_update)
 
 class CRE_Attached_photo(models.Model):
     cr_estate = models.ForeignKey(CommercialRealEstate, verbose_name=u'недвижимость')

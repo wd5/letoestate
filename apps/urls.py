@@ -21,7 +21,7 @@ info_dict_excles = {
 info_dict_resides = {
     'queryset': ResidentialRealEstate.objects.published(),
 }
-info_dict_comerces = {
+info_dict_commerces = {
     'queryset': CommercialRealEstate.objects.published(),
 }
 
@@ -29,7 +29,7 @@ sitemaps = {
     'pages': GenericSitemap(info_dict_pages, priority=0.6),
     'exclestate': GenericSitemap(info_dict_excles, priority=0.5),
     'residentialestate': GenericSitemap(info_dict_resides, priority=0.5),
-    'commertialestate': GenericSitemap(info_dict_comerces, priority=0.5),
+    'commercialestate': GenericSitemap(info_dict_commerces, priority=0.5),
     }
 
 

@@ -22,6 +22,7 @@
         <a href="{{ item.get_absolute_url }}catalog/commercial/" class="catalog_lnk">Коммерческая недвижимость<img src="/media/images/flag1.png" alt="" class="flag" /></a>
     {% endif %}
     <h1>{{ catalog_item.title }}</h1>
+    <div>Код объекта: {{ catalog_item.serial_number }}</div>
     <div class="item">
         <div class="item_imgs">
             <div class="item_img_zl">

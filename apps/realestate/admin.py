@@ -72,7 +72,8 @@ class ResidentialRealEstateAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('id', 'title', 'slug', 'price', 'order', 'is_published',)
     list_display_links = ('id','title', 'slug',)
     list_editable = ('price', 'order', 'is_published',)
-    search_fields = ('title', 'description', 'add_parameter_info',)
+    search_fields = ('title', 'description', 'add_parameter_info','serial_number',)
+    readonly_fields = ('serial_number',)
     list_filter = ('is_published', 'country', 'region', 'rre_type', 'price', )
     form = RREstateAdminForm
     inlines = [
@@ -105,7 +106,8 @@ class CommercialRealEstateAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('id', 'title', 'slug', 'price', 'order', 'is_published',)
     list_display_links = ('id','title', 'slug',)
     list_editable = ('price', 'order', 'is_published',)
-    search_fields = ('title', 'description', 'add_parameter_info',)
+    search_fields = ('title', 'description', 'add_parameter_info', 'serial_number',)
+    readonly_fields = ('serial_number',)
     list_filter = ('is_published', 'country', 'region', 'cre_type', 'price', )
     form = CREstateAdminForm
     inlines = [

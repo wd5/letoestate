@@ -57,7 +57,7 @@ class ShowCatalogView(DetailView):
             item_slug = self.kwargs.get('item', None)
             if item_slug:
                 context['catalog_item'] = ResidentialRealEstate.objects.get(slug=item_slug)
-        if item_type == 'commertial':
+        if item_type == 'commercial':
             context['catalog'] = self.object.get_cre_catalog()
             context['estate_types'] = CRE_Type.objects.published()
             item_slug = self.kwargs.get('item', None)
@@ -134,7 +134,7 @@ class ShowCatalogView(DetailView):
         return context
 
 show_residential_catalog = csrf_protect(ShowCatalogView.as_view())
-show_commertial_catalog = csrf_protect(ShowCatalogView.as_view())
+show_commercial_catalog = csrf_protect(ShowCatalogView.as_view())
 
 class ShowCatalogItemView(DetailView):
     model = Country
@@ -148,7 +148,7 @@ class ShowCatalogItemView(DetailView):
         if item_slug and item_type:
             if item_type == 'residential':
                 model = ResidentialRealEstate
-            if item_type == 'commertial':
+            if item_type == 'commercial':
                 model = CommercialRealEstate
             context['item_type'] = item_type
             try:
@@ -332,7 +332,7 @@ class LoadCatalogView(View):
                         queryset = queryset.filter(rre_type=subtype)
                     else:
                         queryset = queryset.filter(rre_type=subtype).filter(region=region)
-            elif type == "commertial":
+            elif type == "commercial":
                 country = Country.objects.get(pk=country_id)
                 queryset = country.get_cre_catalog()
                 #queryset = CommercialRealEstate.objects.published().filter()
@@ -362,7 +362,7 @@ class LoadCatalogView(View):
                             params = params.filter(value__gte=param[1])
                             params = params.filter(value__lte=param[2])
                             estate_ids = params.values('rr_estate_id')
-                        elif type == "commertial":
+                        elif type == "commercial":
                             params = CRE_AdditionalParameter.objects.filter(type=param[0])
                             params = params.filter(value__gte=param[1])
                             params = params.filter(value__lte=param[2])
