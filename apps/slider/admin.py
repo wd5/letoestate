@@ -3,6 +3,15 @@ from django.contrib import admin
 
 from apps.slider.models import SlideItem, HeaderSlideItem
 from sorl.thumbnail.admin import AdminImageMixin
+from apps.utils.widgets import AdminImageCrop
+from apps.slider.models import HeaderSlideItem
+from django import forms
+
+class SliderImage(AdminImageCrop):
+    app_and_model = 'slider/headerslideitem/'
+    img_width = 996
+    img_height = 241
+
 
 class SlideItemAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('id','title','admin_photo_preview','url','order','is_published',)
@@ -13,10 +22,15 @@ class SlideItemAdmin(AdminImageMixin, admin.ModelAdmin):
 
 admin.site.register(SlideItem, SlideItemAdmin)
 
+class SliderAdminForm(forms.ModelForm):
+    image = forms.ImageField(widget=SliderImage, label=u'Изображение')
+    model = HeaderSlideItem
+
 class HeaderSlideItemAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('id','admin_photo_preview','order','is_published',)
     list_display_links = ('id','admin_photo_preview',)
     list_editable = ('order','is_published',)
     list_filter = ('is_published',)
+    form = SliderAdminForm
 
 admin.site.register(HeaderSlideItem, HeaderSlideItemAdmin)

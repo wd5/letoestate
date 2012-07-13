@@ -22,7 +22,7 @@
                                 {% endthumbnail %}
                             </div>
                         {% endif %}
-                        <div class="faq_author"><span class="faq_data">{{ review.date_add|date:"j E" }}</span> <span class="faq_author_name">{{ review.title }}</span></div>
+                        <div class="faq_author"><span class="faq_author_name">{{ review.title }}</span> <span class="faq_data">{{ review.date_add|date:"j E" }}</span></div>
                         <div class="question_text">{{ review.text|safe }}</div>
                     </div>
 

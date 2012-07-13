@@ -34,7 +34,7 @@ sitemaps = {
 
 
 urlpatterns = patterns('',
-
+    (r'^admin/crop/slider/headerslideitem/(?P<id_image>\d+)/$', 'apps.views.slider_crop_image'),
     (r'^load_items/$',csrf_exempt(items_loader)),
     (r'^load_region/$',csrf_exempt(load_region)),
     url(r'^$',index, name='index'),

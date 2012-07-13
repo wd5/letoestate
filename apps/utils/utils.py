@@ -81,3 +81,37 @@ def send_emails(m, file):
            (m.id, m.name, m.email, m.phone)
 
     send_order_email(subject, html_content, email_list, file)
+
+
+def crop_image(post, original_img, output_size):
+    import settings
+    try:
+        from PIL import Image
+    except ImportError:
+        import Image
+    x1 = int(post['x1'])
+    y1 = int(post['y1'])
+    x2 = int(post['x2'])
+    y2 = int(post['y2'])
+    box = (x1, y1, x2, y2)
+    infile = settings.ROOT_PATH + original_img.image.url
+    file, ext = os.path.splitext(infile)
+    im = Image.open(infile)
+    ms = im.crop(box)
+    name = file + "_crop.jpg"
+    ms.save(name, "JPEG")
+    image = Image.open(name)
+    m_width = float(output_size[0])
+    m_height = float(output_size[1])
+    w_k = image.size[0]/m_width
+    h_k = image.size[1]/m_height
+    if output_size < image.size:
+        if w_k > h_k:
+            new_size = (int(m_width), int(image.size[1]/w_k))
+        else:
+            new_size = (int(image.size[0]/h_k), int(m_height))
+    else:
+        new_size = image.size
+    image = image.resize(new_size, Image.ANTIALIAS)
+    image.save(name, "JPEG", quality=100)
+    return True
