@@ -21,12 +21,22 @@ class ExpertAdmin(AdminImageMixin, admin.ModelAdmin):
     list_filter = ('is_published',)
     form = ExpertAdminForm
 
+class QuestionAdminForm(forms.ModelForm):
+    answer = forms.CharField(
+        widget=Redactor(attrs={'cols': 170, 'rows': 20}),
+        label = u'Текст',
+    )
+    class Meta:
+        model = Question
+
+
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('id','pub_date','name','email', 'is_published',)
     list_display_links = ('id','pub_date',)
     list_editable = ('is_published',)
     search_fields = ('name','email', 'question', 'answer',)
     list_filter = ('pub_date','is_published',)
+    form = QuestionAdminForm
 
 #class QuestionCategoryAdmin(admin.ModelAdmin):
 #    list_display = ('title', 'order','is_published',)
