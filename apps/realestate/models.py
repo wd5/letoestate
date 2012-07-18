@@ -188,7 +188,7 @@ def file_path_RE_Images(instance, filename):
 
 def str_price(price):
     if not price:
-        return u'цена по запросу'
+        return u'0'
     value = u'%s' %price
     if price._isinteger():
         value = u'%s' %value[:len(value)-3]
@@ -203,9 +203,9 @@ def str_price(price):
         if len(starts)>3:
             starts = u'%s %s' % (starts[:1],starts[1:len(starts)])
 
-        return u'%s %s EUR' %(starts, ends)
+        return u'%s %s' %(starts, ends)
     else:
-        return u'%s EUR' % value
+        return u'%s' % value
 
 class ParameterType(models.Model):
     title = models.CharField(verbose_name=u'название', max_length=100)
@@ -259,7 +259,10 @@ class ResidentialRealEstate(models.Model):
         return self.rre_attached_photo_set.all()
 
     def get_str_price(self):
-        return str_price(self.price)
+        result = str_price(self.price)
+        if result=='0':
+            result = u'цена по запросу'
+        return result
 
     def get_parameters(self):
         return self.rre_additionalparameter_set.all()
@@ -344,7 +347,10 @@ class CommercialRealEstate(models.Model):
         return self.cre_attached_photo_set.all()
 
     def get_str_price(self):
-        return str_price(self.price)
+        result = str_price(self.price)
+        if result=='0':
+            result = u'цена по запросу'
+        return result
 
     def get_parameters(self):
         return self.cre_additionalparameter_set.all()
@@ -443,7 +449,10 @@ class ExclusiveRealEstate(models.Model):
         return self.exre_attached_photo_set.all()
 
     def get_str_price(self):
-        return str_price(self.price)
+        result = str_price(self.price)
+        if result=='0':
+            result = u'цена по запросу'
+        return result
 
     def get_absolute_url(self):
         return u'/exclusive/%s/' % self.slug
