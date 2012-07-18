@@ -23,7 +23,7 @@
                    <a href="{{ item.get_absolute_url }}" class="item_img_fr"></a></div>
                <div class="item_cat_des">
                    <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
-                   <div class="item_price">{{ item.get_str_price }} EUR</div>
+                   <div class="item_price">{{ item.get_str_price }}</div>
                    <p>{{ item.description|safe|truncatewords_html:33 }}</p>
                </div>
            </div>

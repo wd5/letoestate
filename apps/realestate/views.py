@@ -64,7 +64,7 @@ class ShowCatalogView(DetailView):
             if item_slug:
                 context['catalog_item'] = CommercialRealEstate.objects.get(slug=item_slug)
 
-        dic = context['catalog'].aggregate(Min('price'), Max('price'))
+        dic = context['catalog'].exclude(price=0).aggregate(Min('price'), Max('price'))
         context['max_price'] = dic['price__max']
         context['min_price'] = dic['price__min']
         try:
@@ -369,7 +369,7 @@ class LoadCatalogView(View):
                             estate_ids = params.values('cr_estate_id')
                         queryset = queryset.filter(id__in=estate_ids)
 
-            dic = queryset.aggregate(Min('price'), Max('price'))
+            dic = queryset.exclude(price=0).aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']
             min_price = dic['price__min']
             try:
@@ -414,8 +414,7 @@ class ExclusiveCatalogView(ListView):
         context = super(ExclusiveCatalogView, self).get_context_data(**kwargs)
 
         queryset = self.queryset
-
-        dic = queryset.aggregate(Min('price'), Max('price'))
+        dic = queryset.exclude(price=0).aggregate(Min('price'), Max('price'))
         context['max_price'] = dic['price__max']
         context['min_price'] = dic['price__min']
         try:
@@ -479,7 +478,7 @@ class LoadExclCatalogView(View):
                 queryset = queryset.filter(price__gte=price_min)
                 queryset = queryset.filter(price__lte=price_max)
 
-            dic = queryset.aggregate(Min('price'), Max('price'))
+            dic = queryset.exclude(price=0).aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']
             min_price = dic['price__min']
             try:

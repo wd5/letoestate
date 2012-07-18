@@ -182,7 +182,7 @@ function SetPriceSlider(start, end, step, disabl)
         min: parseInt(start),
         max: parseInt(end),
         values:[parseInt(start),parseInt(end)],
-        change: function(event, ui) {
+        stop: function(event, ui) {
             vals = $(this).slider( "option", "values" )
             price_label_l.html(vals[0]);
             price_label_r.html(vals[1]);
@@ -217,7 +217,8 @@ function SetCatalogPriceSlider(start, end, step, disabl)
         min: parseInt(start),
         max: parseInt(end),
         values:[parseInt(start),parseInt(end)],
-        change: function(event, ui) {
+        stop: function(event, ui) {
+
             vals = $(this).slider( "option", "values" )
             if ((vals[0]==0) && (vals[1]==0))
                 {price_label_l.html('-');
@@ -243,6 +244,7 @@ function SetCatalogPriceSlider(start, end, step, disabl)
                     $('.catalog').replaceWith(jqXHR.responseText);
                 }
             });
+
         }
     });
 }
@@ -256,7 +258,7 @@ function SetAdditionalSlider(id, start, end, step, disabl)
         min: parseInt(start),
         max: parseInt(end),
         values:[parseInt(start),parseInt(end)],
-        change: function(event, ui) {
+        stop: function(event, ui) {
             price_vals = $('#catalog_price_slider').slider( "option", "values" )
             var slider_label_l = $(this).find('.slider_label_l')
             var slider_label_r = $(this).find('.slider_label_r')
@@ -320,7 +322,6 @@ function LoadCatalog(type, subtype, region, country_id)
 
             if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
                 {
-
                     if ((maxp!=NaN) && (maxp!=''))
                         {price_label_r.html('-');}
                     else
@@ -330,7 +331,6 @@ function LoadCatalog(type, subtype, region, country_id)
                 }
             else
                 {
-
                     len = maxp - minp
                     stp = len/10
                     SetCatalogPriceSlider(minp,maxp,stp,false);

@@ -43,7 +43,7 @@
 
         </div>
         <div class="item_des">
-            <p>{{ item.description }}</p>
+            <p>{{ item.description|safe }}</p>
             <div class="item_specs">
                 <div class="item_spec">
                     <span class="item_spec_value">{{ item.country }}</span>
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="item_ad">
-                <div class="item_ad_price">{{ item.get_str_price }} EUR</div>
+                <div class="item_ad_price">{{ item.get_str_price }}</div>
                 <div class="submit">
                     <div><a href="/countries/send_request/exclusive/{{ item.id }}/" class="fancybox">Оставить заявку</a></div>
                 </div>

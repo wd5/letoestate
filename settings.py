@@ -2,8 +2,8 @@
 DATABASE_NAME = u'letoestate'
 PROJECT_NAME = u'letoestate'
 SITE_NAME = u'LetoEstate'
-SITE_URL = u'letoestate.octweb.ru'
-DEFAULT_FROM_EMAIL = u'support@letoestate.octweb.ru'
+SITE_URL = u'letoestate.ru'
+DEFAULT_FROM_EMAIL = u'support@letoestate.ru'
 
 from config.base import *
 

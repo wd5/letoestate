@@ -188,7 +188,7 @@ def file_path_RE_Images(instance, filename):
 
 def str_price(price):
     if not price:
-        return u'0'
+        return u'цена по запросу'
     value = u'%s' %price
     if price._isinteger():
         value = u'%s' %value[:len(value)-3]
@@ -200,9 +200,12 @@ def str_price(price):
         ends = value[len(value)-count:]
         starts = value[:len(value)-count]
 
-        return u'%s %s' %(starts, ends)
+        if len(starts)>3:
+            starts = u'%s %s' % (starts[:1],starts[1:len(starts)])
+
+        return u'%s %s EUR' %(starts, ends)
     else:
-        return value
+        return u'%s EUR' % value
 
 class ParameterType(models.Model):
     title = models.CharField(verbose_name=u'название', max_length=100)

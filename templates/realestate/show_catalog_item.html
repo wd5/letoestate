@@ -47,7 +47,7 @@
 
         </div>
         <div class="item_des">
-            <p>{{ catalog_item.description }}</p>
+            <p>{{ catalog_item.description|safe }}</p>
             <div class="item_specs">
                 <div class="item_spec">
                     <span class="item_spec_value">{{ catalog_item.region.title }}</span>
