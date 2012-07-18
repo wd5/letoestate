@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+from django.conf import settings
 from datetime import datetime
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from apps.utils.utils import ImageField
 from apps.pages.models import Page
@@ -9,6 +11,20 @@ from pytils.translit import translify
 
 from sorl.thumbnail import ImageField as sorl_ImageField
 from apps.utils.managers import PublishedManager
+
+def simpleResize(original_img_path):
+    try:
+        from PIL import Image
+    except ImportError:
+        import Image
+    im = Image.open(original_img_path)
+    ratio = float(im.size[0]) / float(im.size[1])
+    width = 1600
+    height = int(1600/ratio)
+    output_size = [width,height]
+    if im.size[0]>1600:
+        im = im.resize(output_size, Image.ANTIALIAS)
+    return im
 
 def file_path_icons(instance, filename):
     return os.path.join('images','countryIcons',  translify(filename).replace(' ', '_') )
@@ -182,7 +198,6 @@ class CRE_Type(models.Model):
     def get_estate(self):
         return self.commercialrealestate_set.publihsed()
 
-
 def file_path_RE_Images(instance, filename):
     return os.path.join('images','REImages',  translify(filename).replace(' ', '_') )
 
@@ -282,6 +297,12 @@ class ResidentialRealEstate(models.Model):
             raise ValueError("Cannot force both insert and updating in model saving.")
         self.save_base(using=using, force_insert=force_insert, force_update=force_update)
 
+def crop_RRE(sender, instance, created, **kwargs):
+    path = "%s%s" % (settings.ROOT_PATH, instance.image.url)
+    simpleResize(path).save(path,quality=80)
+
+post_save.connect(crop_RRE, sender=ResidentialRealEstate)
+
 class RRE_Attached_photo(models.Model):
     rr_estate = models.ForeignKey(ResidentialRealEstate, verbose_name=u'недвижимость')
     image = ImageField(upload_to=file_path_RE_Images, verbose_name=u'изображение')
@@ -297,6 +318,12 @@ class RRE_Attached_photo(models.Model):
 
     def get_src_image(self):
         return self.image.url
+
+def crop_RRE_Photo(sender, instance, created, **kwargs):
+    path = "%s%s" % (settings.ROOT_PATH, instance.image.url)
+    simpleResize(path).save(path,quality=80)
+
+post_save.connect(crop_RRE_Photo, sender=RRE_Attached_photo)
 
 class RRE_AdditionalParameter(models.Model):
     rr_estate = models.ForeignKey(ResidentialRealEstate, verbose_name=u'недвижимость')
@@ -372,6 +399,12 @@ class CommercialRealEstate(models.Model):
             raise ValueError("Cannot force both insert and updating in model saving.")
         self.save_base(using=using, force_insert=force_insert, force_update=force_update)
 
+def crop_CRE(sender, instance, created, **kwargs):
+    path = "%s%s" % (settings.ROOT_PATH, instance.image.url)
+    simpleResize(path).save(path,quality=80)
+
+post_save.connect(crop_CRE, sender=CommercialRealEstate)
+
 class CRE_Attached_photo(models.Model):
     cr_estate = models.ForeignKey(CommercialRealEstate, verbose_name=u'недвижимость')
     image = ImageField(upload_to=file_path_RE_Images, verbose_name=u'изображение')
@@ -387,6 +420,12 @@ class CRE_Attached_photo(models.Model):
 
     def get_src_image(self):
         return self.image.url
+
+def crop_CRE_Photo(sender, instance, created, **kwargs):
+    path = "%s%s" % (settings.ROOT_PATH, instance.image.url)
+    simpleResize(path).save(path,quality=80)
+
+post_save.connect(crop_CRE_Photo, sender=CRE_Attached_photo)
 
 class CRE_AdditionalParameter(models.Model):
     cr_estate = models.ForeignKey(CommercialRealEstate, verbose_name=u'недвижимость')
@@ -463,6 +502,12 @@ class ExclusiveRealEstate(models.Model):
     def get_absolute_url(self):
         return u'/exclusive/%s/' % self.slug
 
+def crop_ExcE(sender, instance, created, **kwargs):
+    path = "%s%s" % (settings.ROOT_PATH, instance.image.url)
+    simpleResize(path).save(path,quality=80)
+
+post_save.connect(crop_ExcE, sender=ExclusiveRealEstate)
+
 class EXRE_Attached_photo(models.Model):
     ex_estate = models.ForeignKey(ExclusiveRealEstate, verbose_name=u'недвижимость')
     image = ImageField(upload_to=file_path_RE_Images, verbose_name=u'изображение')
@@ -478,3 +523,9 @@ class EXRE_Attached_photo(models.Model):
 
     def get_src_image(self):
         return self.image.url
+
+def crop_ExcE_Photo(sender, instance, created, **kwargs):
+    path = "%s%s" % (settings.ROOT_PATH, instance.image.url)
+    simpleResize(path).save(path,quality=80)
+
+post_save.connect(crop_ExcE_Photo, sender=crop_ExcE_Photo)
