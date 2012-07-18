@@ -9,7 +9,7 @@
     {% if type == "residential" %}
         <input type="hidden" id="m_name" value="ResidentialRealEstate">
     {% endif %}
-    {% if type == "commertial" %}
+    {% if type == "commercial" %}
         <input type="hidden" id="m_name" value="CommercialRealEstate">
     {% endif %}
     <input type="hidden" id="a_name" value="realestate">
@@ -24,7 +24,7 @@
                <div class="item_cat_des">
                    <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
                    <div class="item_price">{{ item.get_str_price }} EUR</div>
-                   <p>{{ item.description|truncatewords:33 }}</p>
+                   <p>{{ item.description|safe|truncatewords_html:33 }}</p>
                </div>
            </div>
     {% endfor %}
@@ -45,7 +45,7 @@
         {% if item_type == "residential" %}
             <input type="hidden" id="m_name" value="ResidentialRealEstate">
         {% endif %}
-        {% if item_type == "commertial" %}
+        {% if item_type == "commercial" %}
             <input type="hidden" id="m_name" value="CommercialRealEstate">
         {% endif %}
         <input type="hidden" id="a_name" value="realestate">

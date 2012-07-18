@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import *
-from apps.realestate.views import show_residential_catalog,show_commertial_catalog, show_country, show_news, news_detail, show_catalog_item, send_request, save_request, load_catalog
+from apps.realestate.views import show_residential_catalog,show_commercial_catalog, show_country, show_news, news_detail, show_catalog_item, send_request, save_request, load_catalog
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     (r'^(?P<slug>[^/]+)/$',show_country),
     (r'^(?P<slug>[^/]+)/catalog/$',show_residential_catalog),
     (r'^(?P<slug>[^/]+)/catalog/(?P<type>[^/]+)/$',show_residential_catalog),
-    (r'^(?P<slug>[^/]+)/catalog/(?P<type>[^/]+)/$',show_commertial_catalog),
+    (r'^(?P<slug>[^/]+)/catalog/(?P<type>[^/]+)/$',show_commercial_catalog),
     (r'^(?P<slug>[^/]+)/catalog/(?P<type>[^/]+)/(?P<item>[^/]+)/$',show_catalog_item),
     (r'^(?P<slug>[^/]+)/catalog/(?P<type>[^/]+)/(?P<item>[^/]+)/$',show_catalog_item),
     (r'^(?P<slug>[^/]+)/news/$',show_news),

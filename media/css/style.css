@@ -136,7 +136,7 @@ h3 {
 .pic_fr {
 	position: absolute;
 	top: -26px;
-	left: -39px;
+	left: -38px;
 	height: 301px;
 	width: 1083px;
 	background: url(../img/pic_fr.png) 0 0 no-repeat;
@@ -723,8 +723,12 @@ span.filter_curr a {
 }
 .email, .phonenumber {
 	display: block;
-	font-size: 14px;
-	font-weight: bold;
+}
+.phonenumber {
+	font-size: 16px;
+}
+.email {
+	margin-bottom: 12px;
 }
 /*/experts*/
 
@@ -866,8 +870,8 @@ display:inline-block}
 
 /*faq*/
 .faq_author {
-	font-style: 12px;
-	margin: 0 0 10px;
+	font-size: 12px;
+	margin: 0 0 4px 0;
 }
 .faq_data {
 	display: inline-block;
@@ -877,7 +881,7 @@ display:inline-block}
 }
 .faq_author_name {
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 14px;
 }
 .question, .answer {
 	margin: 0 0 18px;
@@ -909,9 +913,15 @@ display:inline-block}
 	display: inline-block;
 	vertical-align: top;
 	font: 14px/18px 'PT Sans', sans-serif;
-	margin: 0 0 18px;
 	padding: 3px 8px;
 	border-radius: 3px;
+}
+.input, .textarea {
+	margin: 0 0 18px;
+}
+.errorlist {
+	text-align: right;
+	margin: 0 20px 0 0;
 }
 .input input, .textarea textarea {
 	border: 1px solid #a35400;
@@ -1003,6 +1013,9 @@ display:inline-block}
 	padding: 15px 20px;
 	background: #fff;
 	width: 350px;
+}
+.form_faq .submit {
+	margin-left: 116px;
 }
 /*/form_search*/
 /*--------------FORMS_END------------------*/

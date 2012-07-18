@@ -21,7 +21,7 @@
                     </div>
                     <div class="descr">
                         <a href="{{ expert.get_absolute_url }}" class="name">{{ expert.full_name }}</a>
-                        <span class="description">{{ expert.description }}</span>
+                        <div class="description">{{ expert.description }}</div>
                     </div>
                 </div>
             {% endfor %}
@@ -37,9 +37,9 @@
                 </div>
                 <div class="descr">
                     <span class="name">{{ expert.full_name }}</span>
-                    <span class="email">{{ expert.email }}</span>
                     <span class="phonenumber">{{ expert.phonenumber }}</span>
-                    <span class="description">{{ expert.full_description|safe }}</span>
+                    <span class="email"><a href="mailto:{{ expert.email }}">{{ expert.email }}</a></span>
+                    <div class="description">{{ expert.full_description|safe }}</div>
                 </div>
             </div>
         </div>

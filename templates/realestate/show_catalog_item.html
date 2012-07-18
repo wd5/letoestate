@@ -16,12 +16,13 @@
 
 {% block main_right %}
     {% if item_type == 'residential' %}
-        <a href="{{ item.get_absolute_url }}catalog/residential/" class="catalog_lnk">Жилая недвижимость<img src="/media/images/flag1.png" alt="" class="flag" /></a>
+        <a href="{{ item.get_absolute_url }}catalog/residential/" class="catalog_lnk">Жилая недвижимость<img src="{{ item.get_src_image }}" alt="{{ item.title }}" class="flag" /></a>
     {% endif %}
     {% if item_type == 'commercial' %}
-        <a href="{{ item.get_absolute_url }}catalog/commercial/" class="catalog_lnk">Коммерческая недвижимость<img src="/media/images/flag1.png" alt="" class="flag" /></a>
+        <a href="{{ item.get_absolute_url }}catalog/commercial/" class="catalog_lnk">Коммерческая недвижимость<img src="{{ item.get_src_image }}" alt="{{ item.title }}" class="flag" /></a>
     {% endif %}
     <h1>{{ catalog_item.title }}</h1>
+    <div>Код объекта: {{ catalog_item.serial_number }}</div>
     <div class="item">
         <div class="item_imgs">
             <div class="item_img_zl">

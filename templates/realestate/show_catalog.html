@@ -15,14 +15,14 @@
 {% endblock %}
 
 {% block main_right %}
-    <input type="hidden" value="{{ item.id }}" id="country_id">
+    <input type="hidden" value="{{ item.id }}" id="country_id" />
     {% if item_type == "residential" %}
-        <h1>Жилая недвижимость <img src="/media/images/flag1.png" alt="" class="flag" /><span> или <a href="{{ item.get_absolute_url }}catalog/commertial/" class="check_type">Коммерческая недвижимость</a></span></h1>
-        <input type="hidden" value="residential" id="re_type">
+        <h1>Жилая недвижимость <img src="{{ item.get_src_image }}" alt="{{ item.title }}" class="flag" /><span> или <a href="{{ item.get_absolute_url }}catalog/commercial/" class="check_type">Коммерческая недвижимость</a></span></h1>
+        <input type="hidden" value="residential" id="re_type" />
     {% endif %}
-    {% if item_type == "commertial" %}
-        <h1><span><a href="{{ item.get_absolute_url }}catalog/residential/" class="check_type">Жилая недвижимость</a> или </span>Коммерческая недвижимость <img src="/media/images/flag1.png" alt="" class="flag" /> </h1>
-        <input type="hidden" value="commertial" id="re_type">
+    {% if item_type == "commercial" %}
+        <h1><span><a href="{{ item.get_absolute_url }}catalog/residential/" class="check_type">Жилая недвижимость</a> или </span>Коммерческая недвижимость <img src="{{ item.get_src_image }}" alt="{{ item.title }}" class="flag" /> </h1>
+        <input type="hidden" value="commercial" id="re_type" />
     {% endif %}
 
     <div class="filters">
@@ -50,8 +50,10 @@
                 {% endif %}
             </div>
         </div>
+
+    {% if item_type == "residential" %}
         <div class="filter_show_more"><a href="#">Дополнительные параметры</a></div>
-        <input type="hidden" id="add_parameters_values" value="{{ additional_parameters_string }}">
+        <input type="hidden" id="add_parameters_values" value="{{ additional_parameters_string }}" />
         <div class="filter_exts">
             {% for add_parameter in additional_parameters %}
                 <div class="filter_ext">
@@ -68,18 +70,21 @@
                 </div>
             {% endfor %}
         </div>
+    {% endif %}
+
+
     </div><!-- /filters -->
 
     <div class="catalog load_block">
 
-        <input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}">
+        <input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}" />
         {% if item_type == "residential" %}
-            <input type="hidden" id="m_name" value="ResidentialRealEstate">
+            <input type="hidden" id="m_name" value="ResidentialRealEstate" />
         {% endif %}
-        {% if item_type == "commertial" %}
-            <input type="hidden" id="m_name" value="CommercialRealEstate">
+        {% if item_type == "commercial" %}
+            <input type="hidden" id="m_name" value="CommercialRealEstate" />
         {% endif %}
-        <input type="hidden" id="a_name" value="realestate">
+        <input type="hidden" id="a_name" value="realestate" />
 
         {% for item in catalog %}
                 <div class="item">
@@ -91,7 +96,7 @@
                    <div class="item_cat_des">
                        <a href="{{ item.get_absolute_url }}" class="item_name_lnk">{{ item.title }}</a>
                        <div class="item_price">{{ item.get_str_price }} EUR</div>
-                       <p>{{ item.description|truncatewords:33 }}</p>
+                       <p>{{ item.description|safe|truncatewords_html:33 }}</p>
                    </div>
                </div>
         {% endfor %}

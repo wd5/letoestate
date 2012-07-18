@@ -19,7 +19,7 @@
                 {% if question.answer %}
                     <div class="answer">
                         <div class="faq_author"><span class="faq_data">{{ question.ans_date|date:"j E" }}</span> <span class="faq_author_name">{{ question.author }}</span></div>
-                        <div class="answer_text">{{ question.answer }}</div>
+                        <div class="answer_text">{{ question.answer|safe }}</div>
                     </div>
                 {% endif %}
             </div>

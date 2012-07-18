@@ -5,9 +5,10 @@
             <div class="blk_aid_in">
                 <h2>Консультация</h2>
                 {% thumbnail expert.image "88x110" crop="center" as im %}
-                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    <a href="{{ expert.get_absolute_url }}"><img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" /></a>
                 {% endthumbnail %}
-                <div class="sotr_name">{{ expert.full_name }}</div>
+                {% comment %}<div class="sotr_name">{{ expert.full_name }}</div>{% endcomment %}
+                <a href="{{ expert.get_absolute_url }}" class="sotr_name">{{ expert.full_name }}</a>
                 <div class="cl"></div>
                 <div class="sotr_about">{{ expert.description }}</div>
                 <div class="submit">
