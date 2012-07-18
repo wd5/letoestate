@@ -49,7 +49,7 @@
 		<div class="pic">
             {% if header_slider %}
                 {% for slide in header_slider %}
-                        <img src="{{ slide.get_image }}" class="slider_img" {% if not forloop.first %}style="display: none"{% endif %}>
+                        <img src="{{ slide.get_image }}" class="slider_img" {% if not forloop.first %}style="display: none"{% endif %} alt="" />
                 {% endfor %}
             {% endif %}
 			<div class="pic_fr"></div>
