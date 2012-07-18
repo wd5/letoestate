@@ -262,6 +262,8 @@ class ResidentialRealEstate(models.Model):
         result = str_price(self.price)
         if result=='0':
             result = u'цена по запросу'
+        else:
+            result = u'%s EUR' % result
         return result
 
     def get_parameters(self):
@@ -350,6 +352,8 @@ class CommercialRealEstate(models.Model):
         result = str_price(self.price)
         if result=='0':
             result = u'цена по запросу'
+        else:
+            result = u'%s EUR' % result
         return result
 
     def get_parameters(self):
@@ -452,6 +456,8 @@ class ExclusiveRealEstate(models.Model):
         result = str_price(self.price)
         if result=='0':
             result = u'цена по запросу'
+        else:
+            result = u'%s EUR' % result
         return result
 
     def get_absolute_url(self):
