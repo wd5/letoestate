@@ -276,7 +276,7 @@ save_request = SaveRequestView.as_view()
 class LoadCatalogView(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            if 'type' not in request.POST or 'subtype' not in request.POST or 'region' not in request.POST or 'country_id' not in request.POST:
+            if 'type' not in request.POST or 'subtype' not in request.POST or 'region' not in request.POST or 'country_id' not in request.POST or 'price_sort' not in request.POST:
                 return HttpResponseBadRequest()
 
             if 'price_min' in request.POST and 'price_max' in request.POST:
@@ -301,6 +301,7 @@ class LoadCatalogView(View):
             type = request.POST['type']
             subtype = request.POST['subtype']
             region = request.POST['region']
+            price_sort = request.POST['price_sort']
 
             try:
                 country_id = int(country_id)
@@ -376,6 +377,14 @@ class LoadCatalogView(View):
                 step = len / 10
             except TypeError:
                 step = False
+
+            if price_sort!='by_order':
+                if price_sort=='asc':
+                    queryset = queryset.order_by('price')
+                elif price_sort=='desc':
+                    queryset = queryset.order_by('-price')
+                else:
+                    pass
 
             try:
                 loaded_count = int(Settings.objects.get(name='loaded_count').value)

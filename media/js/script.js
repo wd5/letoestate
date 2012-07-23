@@ -61,7 +61,8 @@ $(function () {
         var country_id = $('#country_id').val()
         var subtype = $(this).attr('name')
         var region = $(this).parent().parent().parent().find('.filter_curr>.check_region').attr('name')
-        LoadCatalog(type, subtype, region, country_id);
+        var price_sort = $(this).parent().parent().parent().find('.filter_curr>.check_price_sort').attr('name')
+        LoadCatalog(type, subtype, region, country_id, price_sort, 'check_subtype');
     });
 
     $('.check_region').live('click',function(){
@@ -69,7 +70,17 @@ $(function () {
         var country_id = $('#country_id').val()
         var region = $(this).attr('name')
         var subtype = $(this).parent().parent().parent().find('.filter_curr>.check_subtype').attr('name')
-        LoadCatalog(type, subtype, region, country_id);
+        var price_sort = $(this).parent().parent().parent().find('.filter_curr>.check_price_sort').attr('name')
+        LoadCatalog(type, subtype, region, country_id, price_sort, 'check_region');
+    });
+
+    $('.check_price_sort').live('click',function(){
+        var type = $('#re_type').val()
+        var country_id = $('#country_id').val()
+        var region = $(this).parent().parent().parent().find('.filter_curr>.check_region').attr('name')
+        var subtype = $(this).parent().parent().parent().find('.filter_curr>.check_subtype').attr('name')
+        var price_sort = $(this).attr('name')
+        LoadCatalog(type, subtype, region, country_id, price_sort, 'check_price_sort');
     });
 
     $('#select_country').live('change',function(){
@@ -233,6 +244,7 @@ function SetCatalogPriceSlider(start, end, step, disabl)
                     type:$('#re_type').val(),
                     subtype:$('.filter_curr>.check_subtype').attr('name'),
                     region:$('.filter_curr>.check_region').attr('name'),
+                    price_sort:$('.filter_curr>.check_price_sort').attr('name'),
                     price_min:vals[0],
                     price_max:vals[1]
                 },
@@ -286,6 +298,7 @@ function SetAdditionalSlider(id, start, end, step, disabl)
                     type:$('#re_type').val(),
                     subtype:$('.filter_curr>.check_subtype').attr('name'),
                     region:$('.filter_curr>.check_region').attr('name'),
+                    price_sort:$('.filter_curr>.check_price_sort').attr('name'),
                     price_min:price_vals[0],
                     price_max:price_vals[1],
                     add_parameters_values:$('#add_parameters_values').val()
@@ -302,15 +315,23 @@ function SetAdditionalSlider(id, start, end, step, disabl)
     });
 }
 
-function LoadCatalog(type, subtype, region, country_id)
+function LoadCatalog(type, subtype, region, country_id, price_sort, sender)
 {
+    if (sender=='check_price_sort') //если нажали на сортировку по цене - то учитываем цену
+        {var vals = $('#catalog_price_slider').slider( "option", "values" )}
+    else
+        {var vals = [0,0]}
     $.ajax({
         url: "/countries/load_catalog/",
         data: {
             type:type,
             subtype:subtype,
             region:region,
-            country_id:country_id
+            country_id:country_id,
+            price_sort:price_sort,
+            price_min:vals[0],
+            price_max:vals[1],
+            add_parameters_values:$('#add_parameters_values').val()
         },
         type: "POST",
         success: function(data) {

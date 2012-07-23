@@ -38,6 +38,12 @@
                 <span><a href="#" class="check_region" name="{{ region.id }}">{{ region.title }}</a></span>
             {% endfor %}
         </div>
+        <div class="filter">
+            <span>Упорядочить по цене:</span>
+            <span class="filter_curr" style="display: none; "><a href="#" name="by_order" class="check_price_sort">Произвольная сортировка</a></span>
+            <span><a href="#" name="asc" class="check_price_sort">По возрастанию</a></span>
+            <span><a href="#" name="desc" class="check_price_sort">По убыванию</a></span>
+        </div>
         <div class="filter_slider">
             <div class="filter_name">Цена (EUR)</div>
             <div class="filter_price_pl">
