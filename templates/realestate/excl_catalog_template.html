@@ -22,6 +22,8 @@
                    <p>{{ item.description|safe|truncatewords_html:33 }}</p>
                </div>
            </div>
+    {% empty %}
+        Если объекта, который подходит под Ваши требования, нет в каталоге - отправьте нам запрос! Мы обязательно найдем то, что Вам нужно!
     {% endfor %}
 
     {% if loaded_count %}
@@ -40,5 +42,6 @@
         <input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}">
         <input type="hidden" id="m_name" value="ExclusiveRealEstate">
         <input type="hidden" id="a_name" value="realestate">
+        Если объекта, который подходит под Ваши требования, нет в каталоге - отправьте нам запрос! Мы обязательно найдем то, что Вам нужно!
     </div>
 {% endif %}

@@ -2,7 +2,7 @@
 from django.contrib import admin
 from sorl.thumbnail.admin import AdminImageMixin
 from django import forms
-from apps.siteblocks.models import BottomSiteMenu, Settings, News, Review, Partner
+from apps.siteblocks.models import BottomSiteMenu, Settings, News, Review, Partner, Analytics
 from apps.utils.widgets import Redactor, AdminImageWidget, LinkWidget
 
 class BottomSiteMenuAdmin(admin.ModelAdmin):
@@ -89,3 +89,23 @@ class ParnterAdmin(AdminImageMixin, admin.ModelAdmin):
     form = ParnterAdminForm
 admin.site.register(Partner, ParnterAdmin)
 
+class AnalyticsAdminForm(forms.ModelForm):
+    description = forms.CharField(
+        widget=Redactor(attrs={'cols': 170, 'rows': 30}),
+        label = u'Описание',
+    )
+    short_description = forms.CharField(
+        widget=forms.Textarea(),
+        label = u'Краткое описание',
+    )
+    class Meta:
+        model = Analytics
+
+class AnalyticsAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = ('title','date_add', 'is_published',)
+    list_display_links = ('title','date_add', )
+    list_filter = ('is_published', 'date_add', )
+    list_editable = ('is_published',)
+    form = AnalyticsAdminForm
+    date_hierarchy = 'date_add'
+admin.site.register(Analytics, AnalyticsAdmin)

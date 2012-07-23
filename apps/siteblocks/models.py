@@ -158,3 +158,38 @@ class Partner(models.Model):
 
     def get_src_image(self):
         return self.logo.url
+
+class Analytics(models.Model):
+    title = models.CharField(
+        verbose_name = u'Заголовок',
+        max_length = 250,
+    )
+    short_description = models.CharField(
+        max_length = 250,
+        verbose_name = u'Краткое описание',
+    )
+    description = models.TextField(
+        verbose_name = u'описание',
+    )
+    is_published = models.BooleanField(
+        verbose_name = u'Опубликовано',
+        default = True,
+    )
+    date_add = models.DateTimeField(
+        verbose_name = u'Дата создания',
+        default = datetime.datetime.now
+    )
+    # Managers
+    objects = PublishedManager()
+
+    class Meta:
+        ordering = ['-date_add', '-id',]
+        verbose_name =_(u'analytics_item')
+        verbose_name_plural =_(u'analytics_items')
+        get_latest_by = 'date_add'
+
+    def __unicode__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return u'/analytics/%s/' % self.id

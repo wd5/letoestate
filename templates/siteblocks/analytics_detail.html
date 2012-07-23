@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pages_extras pagination_tags %}
+
+{% if page.title %}
+    {% block title %}
+        {{ analytics_current.title }} &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="text">
+        <a href="/analytics/">вся аналитика</a> / <h1>{{ analytics_current.title }}</h1>
+        {{ analytics_current.date_add|date:"j E Y"}}
+        {{ analytics_current.description|safe }}
+    </div>
+{% endblock %}

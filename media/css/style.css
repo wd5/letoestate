@@ -780,6 +780,7 @@ span.filter_curr a {
 	left: 0;
 	color: #99898d;
 	font-size: 12px;
+    width: 180px;
 }
 .footer_menu {
 	width: 600px;

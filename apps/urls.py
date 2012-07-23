@@ -32,7 +32,6 @@ sitemaps = {
     'commercialestate': GenericSitemap(info_dict_commerces, priority=0.5),
     }
 
-
 urlpatterns = patterns('',
     (r'^admin/crop/slider/headerslideitem/(?P<id_image>\d+)/$', 'apps.views.slider_crop_image'),
     (r'^load_items/$',csrf_exempt(items_loader)),
@@ -46,6 +45,10 @@ urlpatterns = patterns('',
     (r'^exclusive/load_catalog/$', csrf_exempt(load_excl_catalog)),
     (r'^exclusive/(?P<slug>[^/]+)/$',show_exclusive_item),
     (r'^faq/', include('apps.faq.urls')),
+
+    url(r'^analytics/$', 'apps.siteblocks.views.analytics_list', name='analytics_list', ),
+    url(r'^analytics/(?P<pk>\d*)/$', 'apps.siteblocks.views.analytics_detail', name='analytics_detail'),
+
     (r'^news/', include('apps.siteblocks.urls')),
     (r'^countries/', include('apps.realestate.urls')),
     (r'^site_map/', site_map),

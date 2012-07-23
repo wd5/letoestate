@@ -101,23 +101,23 @@ class ShowCatalogView(DetailView):
                             value_min = curr_param_value
                     except:
                         pass
-            if value_min==10000000: value_min = 0
-            item.max_val=value_max
-            item.min_val=value_min
-            if value_max==value_min or value_max<value_min:
-                disabled=True
-                item.slider_disable='true'
-                item.max_val=1
-                item.min_val=0
-                item.step=1
-            elif value_max>value_min:
-                disabled=False
+            if value_min == 10000000: value_min = 0
+            item.max_val = value_max
+            item.min_val = value_min
+            if value_max == value_min or value_max < value_min:
+                disabled = True
+                item.slider_disable = 'true'
+                item.max_val = 1
+                item.min_val = 0
+                item.step = 1
+            elif value_max > value_min:
+                disabled = False
                 add_p_len = value_max - value_min
                 add_p_step = add_p_len / 10
-                if add_p_step<1:
-                    add_p_step=1
-                item.step=round(add_p_step)
-                item.slider_disable='false'
+                if add_p_step < 1:
+                    add_p_step = 1
+                item.step = round(add_p_step)
+                item.slider_disable = 'false'
             parameters = u'%s%s,%s,%s,%s|' % (parameters, item.id, value_min, value_max, disabled)
 
         if parameters.startswith(',') or parameters.startswith('|'):
@@ -125,7 +125,6 @@ class ShowCatalogView(DetailView):
         if parameters.endswith(',') or parameters.endswith('|'):
             parameters = parameters[:-1]
         parameters = parameters.replace('|,', '|')
-
 
         context['additional_parameters_string'] = parameters
         context['loaded_count'] = remaining_count
@@ -191,7 +190,7 @@ class ShowDetailNewView(DetailView):
 news_detail = ShowDetailNewView.as_view()
 
 class ShowCountryView(RedirectView):
-    url = 'advantage/'
+    url = 'catalog/'
 
 show_country = ShowCountryView.as_view()
 
@@ -356,7 +355,7 @@ class LoadCatalogView(View):
             if add_parameters_values:
                 for item in add_parameters_values.split('|'):
                     param = item.split(',')
-                    if param[3]=='False':
+                    if param[3] == 'False':
                         if type == "residential":
                             params = RRE_AdditionalParameter.objects.filter(type=param[0])
                             params = params.filter(value__gte=param[1])

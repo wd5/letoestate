@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load thumbnail faq_extras siteblocks_extras pages_extras pagination_tags %}
+
+{% if page.title %}
+    {% block title %}
+        Аналитика &mdash;
+    {% endblock %}
+{% endif %}
+
+{% block main_left %}
+    {% block_aid_out %}
+    {% block_news_by_country '' %}
+{% endblock %}
+
+{% block main_right %}
+    <div class="blk_news">
+        <div class="news">
+            <h1>Аналитика</h1>
+            {% autopaginate analytics 7 %}
+                {% for analytics_item in analytics %}
+                    <div class="new">
+                        <div class="new_date">{{ analytics_item.date_add|date:"j E" }}</div>
+                        <div class="new_lnk">
+                            <a href="/analytics/{{ analytics_item.id }}/">{{ analytics_item.title }}</a>
+                        </div>
+                        <div class="new_descr">{{ analytics_item.short_description|safe }}</div>
+                    </div>
+                {% empty %}
+                    Записей пока нет.
+                {% endfor %}
+            {% paginate %}
+        </div>
+    </div><!--/blk_news-->
+{% endblock %}

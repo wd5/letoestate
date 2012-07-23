@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail faq_extras siteblocks_extras %}
+{% load thumbnail faq_extras siteblocks_extras pagination_tags %}
 
 {% block main_left %}
     {% block_aid_out %}
@@ -10,6 +10,8 @@
 {% block main_right %}
     <div class="faqs">
         <h1>Вопрос-ответ</h1>
+
+        {% autopaginate questions 3 %}
         {% for question in questions %}
             <div class="faq">
                 <div class="question">
@@ -26,5 +28,8 @@
         {% empty %}
             Вопросов пока нет.
         {% endfor %}
+        {% paginate %}
+
+
     </div>
 {% endblock %}

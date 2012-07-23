@@ -253,6 +253,11 @@ msgstr "партнёр"
 msgid "partners"
 msgstr "партнёры"
 
+msgid "analytics_item"
+msgstr "запись"
+
+msgid "analytics_items"
+msgstr "аналитика"
 
 
 #: apps/slider/__init__.py:2

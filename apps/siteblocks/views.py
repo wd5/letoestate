@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 
-from models import News, Review, Partner
+from models import News, Review, Partner, Analytics
 
 class NewsListView(ListView):
     model = News
@@ -94,3 +94,41 @@ class PartnersListView(ListView):
     queryset = model.objects.published()
 
 show_parnters = PartnersListView.as_view()
+
+class AnalyticsListView(ListView):
+    model = Analytics
+    context_object_name = 'analytics'
+    queryset = model.objects.published()
+
+    def get_context_data(self, **kwargs):
+        context = super(AnalyticsListView, self).get_context_data(**kwargs)
+        #context['categories_list'] = self.get_categories_list()
+        context['current_date'] = self.request.GET.get('date', None)
+        return context
+
+analytics_list = AnalyticsListView.as_view()
+
+
+class AnalyticsDetailView(DetailView):
+    context_object_name = 'analytics_current'
+    model = Analytics
+    queryset = model.objects.published()
+    template_name = 'siteblocks/analytics_detail.html'
+
+    def get_object(self, queryset=None):
+        queryset = self.get_queryset()
+        pk = self.kwargs.get('pk', None)
+        try:
+            obj = queryset.get(pk=pk)
+        except ObjectDoesNotExist:
+            return False
+        return obj
+
+    def get(self, request, **kwargs):
+        self.object = self.get_object()
+        if not self.object:
+            return HttpResponseRedirect(reverse('analytics_list'))
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+analytics_detail = AnalyticsDetailView.as_view()
