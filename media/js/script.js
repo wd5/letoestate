@@ -87,7 +87,51 @@ $(function () {
         $.ajax({
             url: "/exclusive/load_catalog/",
             data: {
-                country:$(this).val()
+                country:$(this).val(),
+                price_sort:$(this).parents('.filters').find('.filter_curr>.check_price_sort_excl').attr('name')
+            },
+            type: "POST",
+            success: function(data) {
+                $('.catalog').replaceWith(data);
+                var minp = $('#min_price').val()
+                var maxp = $('#max_price').val()
+                var price_label_l = $('.filter_price_pl').find('.slider_label_l')
+                var price_label_r = $('.filter_price_pl').find('.slider_label_r')
+
+                if ((minp==maxp) || (minp==undefined) || (maxp==undefined))
+                    {
+                        if (maxp!=NaN)
+                            {SetPriceSlider(0,0,1,true);
+                            price_label_r.html('-');}
+                        else
+                            {SetPriceSlider(0,0,1,true);
+                            price_label_r.html('-');}
+                        price_label_l.html('-');
+                    }
+                else
+                    {
+                        len = maxp - minp
+                        stp = len/10
+                        SetPriceSlider(minp,maxp,stp,false);
+                        price_label_l.html(minp);
+                        price_label_r.html(maxp);
+                    }
+
+            },
+            error:function(jqXHR,textStatus,errorThrown) {
+                $('.catalog').replaceWith(jqXHR.responseText);
+            }
+        });
+    });
+
+    $('.check_price_sort_excl').live('click',function(){
+        var country = $('#select_country').val()
+        var price_sort = $(this).attr('name')
+        $.ajax({
+            url: "/exclusive/load_catalog/",
+            data: {
+                country:country,
+                price_sort:price_sort
             },
             type: "POST",
             success: function(data) {
@@ -125,6 +169,15 @@ $(function () {
 
     $('.load_items').live('click',function(){
 
+        if ($('.filter_curr>.check_price_sort_excl').attr('name'))
+            {var price_sort = $('.filter_curr>.check_price_sort_excl').attr('name')}
+        else
+            {if($('.filter_curr>.check_price_sort'))
+                {var price_sort = $('.filter_curr>.check_price_sort').attr('name')}
+            else
+                {var price_sort = false}
+            }
+
         var el = $(this);
         var parent = $(this).parents('.load_block');
         $.ajax({
@@ -132,7 +185,8 @@ $(function () {
             data: {
                 load_ids: parent.find('#loaded_ids').val(),
                 m_name: parent.find('#m_name').val(),
-                a_name: parent.find('#a_name').val()
+                a_name: parent.find('#a_name').val(),
+                price_sort: price_sort
             },
             type: "POST",
             success: function(data) {
@@ -202,7 +256,8 @@ function SetPriceSlider(start, end, step, disabl)
                 data: {
                     country:$("#country").val(),
                     price_min:vals[0],
-                    price_max:vals[1]
+                    price_max:vals[1],
+                    price_sort:$(this).parents('.filters').find('.filter_curr>.check_price_sort_excl').attr('name')
                 },
                 type: "POST",
                 success: function(data) {
@@ -216,7 +271,7 @@ function SetPriceSlider(start, end, step, disabl)
     });
 }
 
-function SetCatalogPriceSlider(start, end, step, disabl)
+function SetCatalogPriceSlider(min, max, start, end, step, disabl)
 {
     var price_label_l = $('.filter_price_pl').find('.slider_label_l')
     var price_label_r = $('.filter_price_pl').find('.slider_label_r')
@@ -225,8 +280,8 @@ function SetCatalogPriceSlider(start, end, step, disabl)
         disabled: disabl,
         range: true,
         step: parseInt(step),
-        min: parseInt(start),
-        max: parseInt(end),
+        min: parseInt(min),
+        max: parseInt(max),
         values:[parseInt(start),parseInt(end)],
         stop: function(event, ui) {
 
@@ -246,7 +301,8 @@ function SetCatalogPriceSlider(start, end, step, disabl)
                     region:$('.filter_curr>.check_region').attr('name'),
                     price_sort:$('.filter_curr>.check_price_sort').attr('name'),
                     price_min:vals[0],
-                    price_max:vals[1]
+                    price_max:vals[1],
+                    add_parameters_values:$('#add_parameters_values').val()
                 },
                 type: "POST",
                 success: function(data) {
@@ -330,14 +386,16 @@ function LoadCatalog(type, subtype, region, country_id, price_sort, sender)
             country_id:country_id,
             price_sort:price_sort,
             price_min:vals[0],
-            price_max:vals[1],
-            add_parameters_values:$('#add_parameters_values').val()
+            price_max:vals[1]
+            //add_parameters_values:$('#add_parameters_values').val()
         },
         type: "POST",
         success: function(data) {
             $('.catalog').replaceWith(data);
             var minp = $('#min_price').val()
             var maxp = $('#max_price').val()
+            var startp = $('#start_price').val()
+            var endp = $('#end_price').val()
             var price_label_l = $('.filter_price_pl').find('.slider_label_l')
             var price_label_r = $('.filter_price_pl').find('.slider_label_r')
 
@@ -348,15 +406,15 @@ function LoadCatalog(type, subtype, region, country_id, price_sort, sender)
                     else
                         {price_label_r.html('-');}
                     price_label_l.html('-');
-                    SetCatalogPriceSlider(0,0,1,true);
+                    SetCatalogPriceSlider(0,0,0,0,1,true);
                 }
             else
                 {
                     len = maxp - minp
                     stp = len/10
-                    SetCatalogPriceSlider(minp,maxp,stp,false);
-                    price_label_l.html(minp);
-                    price_label_r.html(maxp);
+                    SetCatalogPriceSlider(minp,maxp,startp,endp,stp,false);
+                    price_label_l.html(startp);
+                    price_label_r.html(endp);
                 }
 
         },

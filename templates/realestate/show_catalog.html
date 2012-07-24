@@ -52,7 +52,7 @@
                     <div style="right: 0%;" class="slider_label_r">{{ max_price|floatformat }}</div>
                 </div>
                 {% if step %}
-                    <script type="text/javascript">SetCatalogPriceSlider({{ min_price|floatformat:0 }},{{ max_price|floatformat:0 }},{{ step|floatformat:0 }},false);</script>
+                    <script type="text/javascript">SetCatalogPriceSlider({{ min_price|floatformat:0 }},{{ max_price|floatformat:0 }},{{ min_price|floatformat:0 }},{{ max_price|floatformat:0 }},{{ step|floatformat:0 }},false);</script>
                 {% endif %}
             </div>
         </div>

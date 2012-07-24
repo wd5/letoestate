@@ -17,13 +17,19 @@
 
     <div class="filters">
         <div class="filter">
-            <span class="filter_curr">Страна:</span>
+            <span>Страна:</span>
             <select name="country" id="select_country">
                     <option value="all">Все страны
                 {% for country in countries %}
                     <option value="{{ country.country }}">{{ country.country }}
                 {% endfor %}
             </select>
+        </div>
+        <div class="filter">
+            <span>Упорядочить по цене:</span>
+            <span class="filter_curr" style="display: none; "><a href="#" name="by_order" class="check_price_sort_excl">Произвольная сортировка</a></span>
+            <span><a href="#" name="asc" class="check_price_sort_excl">По возрастанию</a></span>
+            <span><a href="#" name="desc" class="check_price_sort_excl">По убыванию</a></span>
         </div>
         <div class="filter_slider">
             <div class="filter_name">Цена (EUR)</div>

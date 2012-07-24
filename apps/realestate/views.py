@@ -372,6 +372,7 @@ class LoadCatalogView(View):
             dic = queryset.exclude(price=0).aggregate(Min('price'), Max('price'))
             max_price = dic['price__max']
             min_price = dic['price__min']
+
             try:
                 len = max_price - min_price
                 step = len / 10
@@ -399,10 +400,16 @@ class LoadCatalogView(View):
                 remaining_count = False
             next_id_loaded_items = splited_result[1]
 
+            if price_min and price_max:
+                pass
+            else:
+                price_min = min_price
+                price_max = max_price
+
             items_html = render_to_string(
                 'realestate/catalog_template.html',
                     {'catalog': queryset[:loaded_count], 'loaded_count': remaining_count, 'request': request,
-                     'type': type, 'region': region, 'subtype': subtype,
+                     'type': type, 'region': region, 'subtype': subtype, 'start_price': price_min, 'end_price': price_max,
                      'next_id_loaded_items': next_id_loaded_items,
                      'max_price': max_price, 'min_price': min_price, 'step': step}
             )
@@ -463,7 +470,7 @@ show_exclusive_item = ShowExclusiveItemView.as_view()
 class LoadExclCatalogView(View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            if 'country' not in request.POST or 'country' not in request.POST and 'price_min' not in request.POST and 'price_max' not in request.POST:
+            if 'country' not in request.POST and 'price_sort' not in request.POST or 'country' not in request.POST and 'price_min' not in request.POST and 'price_max' not in request.POST and 'price_sort' not in request.POST :
                 return HttpResponseBadRequest()
 
             if 'price_min' in request.POST and 'price_max' in request.POST:
@@ -477,6 +484,7 @@ class LoadExclCatalogView(View):
                 price_max = False
 
             country = request.POST['country']
+            price_sort = request.POST['price_sort']
             if country == "all":
                 queryset = ExclusiveRealEstate.objects.published()
             else:
@@ -507,6 +515,14 @@ class LoadExclCatalogView(View):
             except:
                 remaining_count = False
             next_id_loaded_items = splited_result[1]
+
+            if price_sort!='by_order':
+                if price_sort=='asc':
+                    queryset = queryset.order_by('price')
+                elif price_sort=='desc':
+                    queryset = queryset.order_by('-price')
+                else:
+                    pass
 
             items_html = render_to_string(
                 'realestate/excl_catalog_template.html',
@@ -584,6 +600,16 @@ class ItemsLoaderView(View):
                 queryset = model.objects.published().filter(id__in=block_id)
             except model.DoesNotExist:
                 return HttpResponseBadRequest()
+
+            if 'price_sort' in request.POST:
+                price_sort = request.POST['price_sort']
+                if price_sort!='by_order':
+                    if price_sort=='asc':
+                        queryset = queryset.order_by('price')
+                    elif price_sort=='desc':
+                        queryset = queryset.order_by('-price')
+                    else:
+                        pass
 
             response = HttpResponse()
             load_template = 'items_loader/rre_load_template.html'

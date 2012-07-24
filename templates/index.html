@@ -37,7 +37,7 @@
                 </li>
             {% endfor %}
             </ul>
-            <div class="specs_ctrls">Наши специальные предложения <img src="/media/images/flag1.png" alt="" /> <span></span><span></span><span></span><span></span></div>
+            <div class="specs_ctrls">Наши специальные предложения <img src="/media/images/flag1.png" alt="" />{% for spec in specs %}<span></span>{% endfor %}</div>
         </div><!-- /specs -->
     {% endif %}
     <div class="main_text">
