@@ -195,6 +195,7 @@ $(function () {
             },
             type: "POST",
             success: function(data) {
+                $('body,html,document').animate({scrollTop:500},"slow");
                 parent.find('.item').remove()
                 parent.find('.load_page').remove()
                 parent.append(data)
@@ -359,8 +360,8 @@ function SetCatalogPriceSlider(min, max, start, end, step, disabl)
                     region:$('.filter_curr>.check_region').attr('name'),
                     price_sort:$('.filter_curr>.check_price_sort').attr('name'),
                     price_min:vals[0],
-                    price_max:vals[1],
-                    add_parameters_values:$('#add_parameters_values').val()
+                    price_max:vals[1]
+                    //add_parameters_values:$('#add_parameters_values').val()
                 },
                 type: "POST",
                 success: function(data) {
