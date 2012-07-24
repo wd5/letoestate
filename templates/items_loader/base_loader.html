@@ -1,5 +1,32 @@
 {% if items %}
-        {% include load_template %}
-        <input type="hidden" id="remaining_count" value="{{ remaining_count }}">
-        <input type="hidden" id="new_load_ids" value="{{ load_ids }}">
+    {% include load_template %}
+
+    {% if next_id_loaded_items %}
+
+        <div class="pagination load_page">
+
+            <input type="hidden" id="all_loaded_ids" value="{{ next_id_loaded_items|join:'|' }}" />
+
+            {% if page_prev %}
+                <a class="pgn_prev" href="#" name="{{ page_prev }}">«</a>
+            {% endif %}
+
+            {% for loaded_ids in next_id_loaded_items %}
+                {% ifequal loaded_ids curr_ids %}
+                    <a class="current_page pgn_num_page" href="#" name="{{ loaded_ids }}">{{ forloop.counter }}</a>
+                {% else %}
+                    <a class="pgn_num_page" href="#" name="{{ loaded_ids }}"
+                       {% if forloop.counter > max_border or forloop.counter < min_border %}style="display: none;" {% endif %}
+                            >{{ forloop.counter }}</a>
+                {% endifequal %}
+            {% endfor %}
+
+            {% if page_next %}
+                <a class="pgn_next" href="#" name="{{ page_next }}">»</a>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
 {% endif %}

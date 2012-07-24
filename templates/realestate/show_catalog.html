@@ -83,7 +83,7 @@
 
     <div class="catalog load_block">
 
-        <input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}" />
+        {% comment %}<input type="hidden" id="loaded_ids" value="{{ next_id_loaded_items }}" />{% endcomment %}
         {% if item_type == "residential" %}
             <input type="hidden" id="m_name" value="ResidentialRealEstate" />
         {% endif %}
@@ -107,11 +107,38 @@
                </div>
         {% endfor %}
 
-        {% if loaded_count %}
+{% comment %}        {% if loaded_count %}
             <div class="show_more">
                 <a href="#" class="load_items">Ещё <span class="cnt">{{ loaded_count }}</span> запис{{ loaded_count|choose_plural:"ь,и,ей" }}</a>
             </div>
+        {% endif %}{% endcomment %}
+
+        {% if next_id_loaded_items %}
+
+            <div class="pagination load_page">
+
+                <input type="hidden" id="all_loaded_ids" value="{{ next_id_loaded_items|join:'|' }}" />
+
+                {% if page_prev %}
+                    <a class="pgn_prev" href="#" name="{{ page_prev }}">«</a>
+                {% endif %}
+
+                {% for loaded_ids in next_id_loaded_items %}
+                    {% ifequal loaded_ids curr_ids %}
+                        <a class="current_page pgn_num_page" href="#" name="{{ loaded_ids }}">{{ forloop.counter }}</a>
+                    {% else %}
+                        <a class="pgn_num_page" href="#" name="{{ loaded_ids }}" {% if forloop.counter > 5 %}style="display: none;" {% endif %}>{{ forloop.counter }}</a>
+                    {% endifequal %}
+                {% endfor %}
+
+                {% if page_next %}
+                    <a class="pgn_next" href="#" name="{{ page_next }}">»</a>
+                {% endif %}
+
+            </div>
+
         {% endif %}
+
     </div><!-- /catalog -->
 
 {% endblock %}

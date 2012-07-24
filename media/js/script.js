@@ -167,7 +167,65 @@ $(function () {
         });
     });
 
-    $('.load_items').live('click',function(){
+    $('.load_page a').live('click',function(){
+        var el = $(this);
+        var parent = $(this).parents('.load_block');
+        var png_parent = $(this).parents('.load_page');
+
+        if ($('.filter_curr>.check_price_sort_excl').attr('name'))
+            {var price_sort = $('.filter_curr>.check_price_sort_excl').attr('name')}
+        else
+            {if($('.filter_curr>.check_price_sort'))
+                {var price_sort = $('.filter_curr>.check_price_sort').attr('name')}
+            else
+                {var price_sort = false}
+            }
+
+        png_parent.find('.current_page').removeClass('current_page');
+        el.addClass('current_page');
+
+        $.ajax({
+            url: "/load_items/",
+            data: {
+                load_ids: el.attr('name'),
+                all_load_ids: $('#all_loaded_ids').val(),
+                m_name: parent.find('#m_name').val(),
+                a_name: parent.find('#a_name').val(),
+                price_sort: price_sort
+            },
+            type: "POST",
+            success: function(data) {
+                parent.find('.item').remove()
+                parent.find('.load_page').remove()
+                parent.append(data)
+                //parent.find('.loaded:eq(0)').fadeIn("fast", function (){ //появление по очереди
+                //       $(this).next().fadeIn("fast", arguments.callee);
+                //   });
+
+                //parent.find('.loaded').fadeIn('slow')  //простое появление
+                parent.find('.loaded').show()  //простое появление
+
+                //parent.find('#loaded_ids').val(parent.find('#new_load_ids').val())
+                parent.find('div').removeClass('loaded')
+                //parent.find('.show_more').appendTo(parent)
+                //var rctxt = parent.find('#remaining_count_text').val()
+                //var rc = parent.find('#remaining_count').val()
+                //if (rctxt!=undefined)
+                //    {el.html(rctxt)}
+                //if (rc<=0)
+                //   {parent.find('.show_more').remove()}
+                //parent.find('#remaining_count_text').remove()
+                //parent.find('#new_load_ids').remove()
+                //parent.find('#remaining_count').remove()
+
+            }
+        });
+
+        return false;
+
+    });
+
+/*    $('.load_items').live('click',function(){
 
         if ($('.filter_curr>.check_price_sort_excl').attr('name'))
             {var price_sort = $('.filter_curr>.check_price_sort_excl').attr('name')}
@@ -213,7 +271,7 @@ $(function () {
         });
 
         return false;
-    });
+    });*/
 
 });
 

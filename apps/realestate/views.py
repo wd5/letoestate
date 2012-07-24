@@ -39,6 +39,25 @@ def GetLoadIds(queryset, loaded_count):
     result = u'%s!%s' % (loaded_count, next_id_loaded_items)
     return result
 
+def GetLoadIdsPage(queryset, loaded_count): #для пагинации
+    counter = 0
+    id_loaded_items = ''
+    for item in queryset:
+        counter = counter + 1
+        div = counter % loaded_count
+        id_loaded_items = u'%s,%s' % (id_loaded_items, item.id)
+        if div == 0:
+            id_loaded_items = u'%s|' % id_loaded_items
+
+    if id_loaded_items.startswith(',') or id_loaded_items.startswith('|'):
+        id_loaded_items = id_loaded_items[1:]
+    if id_loaded_items.endswith(',') or id_loaded_items.endswith('|'):
+        id_loaded_items = id_loaded_items[:-1]
+    id_loaded_items = id_loaded_items.replace('|,', '|')
+
+    result = u'False!%s' % id_loaded_items
+    return result
+
 
 class ShowCatalogView(DetailView):
     model = Country
@@ -78,7 +97,8 @@ class ShowCatalogView(DetailView):
         except:
             loaded_count = 5
         queryset = context['catalog']
-        result = GetLoadIds(queryset, loaded_count)
+        #result = GetLoadIds(queryset, loaded_count)
+        result = GetLoadIdsPage(queryset, loaded_count)
         splited_result = result.split('!')
         try:
             remaining_count = int(splited_result[0])
@@ -126,14 +146,32 @@ class ShowCatalogView(DetailView):
             parameters = parameters[:-1]
         parameters = parameters.replace('|,', '|')
 
+        next_id_loaded_items_array = next_id_loaded_items.split('|')
+        try:
+            curr_ids = next_id_loaded_items_array[0]
+        except:
+            curr_ids = False
+        page_prev = False
+        try:
+            page_next = next_id_loaded_items_array[1]
+        except:
+            next_id_loaded_items_array = False
+            page_next = False
+
         context['additional_parameters_string'] = parameters
-        context['loaded_count'] = remaining_count
+        #context['loaded_count'] = remaining_count
         context['catalog'] = context['catalog'][:loaded_count]
-        context['next_id_loaded_items'] = next_id_loaded_items
+        #context['next_id_loaded_items'] = next_id_loaded_items
+
+        context['next_id_loaded_items'] = next_id_loaded_items_array
+        context['curr_ids'] = curr_ids
+        context['page_prev'] = page_prev
+        context['page_next'] = page_next
         return context
 
 show_residential_catalog = csrf_protect(ShowCatalogView.as_view())
 show_commercial_catalog = csrf_protect(ShowCatalogView.as_view())
+
 
 class ShowCatalogItemView(DetailView):
     model = Country
@@ -392,7 +430,8 @@ class LoadCatalogView(View):
             except:
                 loaded_count = 5
 
-            result = GetLoadIds(queryset, loaded_count)
+            #result = GetLoadIds(queryset, loaded_count)
+            result = GetLoadIdsPage(queryset, loaded_count)
             splited_result = result.split('!')
             try:
                 remaining_count = int(splited_result[0])
@@ -406,11 +445,23 @@ class LoadCatalogView(View):
                 price_min = min_price
                 price_max = max_price
 
+            next_id_loaded_items_array = next_id_loaded_items.split('|')
+            try:
+                curr_ids = next_id_loaded_items_array[0]
+            except:
+                curr_ids = False
+            page_prev = False
+            try:
+                page_next = next_id_loaded_items_array[1]
+            except:
+                next_id_loaded_items_array = False
+                page_next = False
+
             items_html = render_to_string(
                 'realestate/catalog_template.html',
-                    {'catalog': queryset[:loaded_count], 'loaded_count': remaining_count, 'request': request,
+                    {'catalog': queryset[:loaded_count], 'request': request,
                      'type': type, 'region': region, 'subtype': subtype, 'start_price': price_min, 'end_price': price_max,
-                     'next_id_loaded_items': next_id_loaded_items,
+                     'next_id_loaded_items': next_id_loaded_items_array,'curr_ids': curr_ids,'page_prev': page_prev,'page_next': page_next,
                      'max_price': max_price, 'min_price': min_price, 'step': step}
             )
             return HttpResponse(items_html)
@@ -443,7 +494,8 @@ class ExclusiveCatalogView(ListView):
         except Settings.DoesNotExist:
             loaded_count = 5
 
-        result = GetLoadIds(queryset, loaded_count)
+        #result = GetLoadIds(queryset, loaded_count)
+        result = GetLoadIdsPage(queryset, loaded_count)
         splited_result = result.split('!')
         try:
             remaining_count = int(splited_result[0])
@@ -451,10 +503,27 @@ class ExclusiveCatalogView(ListView):
             remaining_count = False
         next_id_loaded_items = splited_result[1]
 
+        next_id_loaded_items_array = next_id_loaded_items.split('|')
+        try:
+            curr_ids = next_id_loaded_items_array[0]
+        except:
+            curr_ids = False
+        page_prev = False
+        try:
+            page_next = next_id_loaded_items_array[1]
+        except:
+            next_id_loaded_items_array = False
+            page_next = False
+
         context['catalog'] = queryset[:loaded_count]
-        context['loaded_count'] = remaining_count
+        #context['loaded_count'] = remaining_count
         context['countries'] = ExclusiveRealEstate.objects.values('country').distinct().order_by('country')
-        context['next_id_loaded_items'] = next_id_loaded_items
+        #context['next_id_loaded_items'] = next_id_loaded_items
+
+        context['next_id_loaded_items'] = next_id_loaded_items_array
+        context['curr_ids'] = curr_ids
+        context['page_prev'] = page_prev
+        context['page_next'] = page_next
         return context
 
 show_exclusive_catalog = ExclusiveCatalogView.as_view()
@@ -508,7 +577,8 @@ class LoadExclCatalogView(View):
             except Settings.DoesNotExist:
                 loaded_count = 5
 
-            result = GetLoadIds(queryset, loaded_count)
+            #result = GetLoadIds(queryset, loaded_count)
+            result = GetLoadIdsPage(queryset, loaded_count)
             splited_result = result.split('!')
             try:
                 remaining_count = int(splited_result[0])
@@ -524,10 +594,22 @@ class LoadExclCatalogView(View):
                 else:
                     pass
 
+            next_id_loaded_items_array = next_id_loaded_items.split('|')
+            try:
+                curr_ids = next_id_loaded_items_array[0]
+            except:
+                curr_ids = False
+            page_prev = False
+            try:
+                page_next = next_id_loaded_items_array[1]
+            except:
+                next_id_loaded_items_array = False
+                page_next = False
+
             items_html = render_to_string(
                 'realestate/excl_catalog_template.html',
                     {'catalog': queryset[:loaded_count], 'loaded_count': remaining_count, 'request': request,
-                     'next_id_loaded_items': next_id_loaded_items,
+                     'next_id_loaded_items': next_id_loaded_items_array,'curr_ids': curr_ids,'page_prev': page_prev,'page_next': page_next,
                      'country': country, 'max_price': max_price, 'min_price': min_price, 'step': step}
             )
             return HttpResponse(items_html)
@@ -569,35 +651,25 @@ class ItemsLoaderView(View):
         if not request.is_ajax():
             return HttpResponseRedirect('/')
         else:
-            if 'load_ids' not in request.POST or 'm_name' not in request.POST or 'a_name' not in request.POST:
+            if 'load_ids' not in request.POST or 'm_name' not in request.POST or 'a_name' not in request.POST or 'all_load_ids' not in request.POST:
                 return HttpResponseBadRequest()
 
-            load_ids = request.POST['load_ids']
+            load_ids_str = request.POST['load_ids']
+            all_load_ids = request.POST['all_load_ids']
             app_name = request.POST['a_name']
             model_name = request.POST['m_name']
             model = get_model(app_name, model_name)
 
-            load_ids_list = load_ids.split('|')
-            block_id = load_ids_list[0]
-            load_ids = load_ids.replace(block_id, '')
-            block_id = block_id.split(',')
-            if load_ids.startswith(',') or load_ids.startswith('|'):
-                load_ids = load_ids[1:]
-            if load_ids.endswith(',') or load_ids.endswith('|'):
-                load_ids = load_ids[:-1]
+            num_curr_page = 0
+            counter = 0
+            for ids in all_load_ids.split('|'):
+                counter = counter + 1
+                if ids == load_ids_str:
+                    num_curr_page = counter
 
+            load_ids = load_ids_str.split(',')
             try:
-                next_ids = load_ids_list[1].split(',')
-            except:
-                next_ids = False
-
-            if next_ids:
-                remaining_count = len(next_ids)
-            else:
-                remaining_count = -1
-
-            try:
-                queryset = model.objects.published().filter(id__in=block_id)
+                queryset = model.objects.published().filter(id__in=load_ids)
             except model.DoesNotExist:
                 return HttpResponseBadRequest()
 
@@ -611,14 +683,106 @@ class ItemsLoaderView(View):
                     else:
                         pass
 
+            next_id_loaded_items_array = all_load_ids.split('|')
+            num_curr = next_id_loaded_items_array.index(load_ids_str)
+            array_length = len(next_id_loaded_items_array)
+
+            png_num_curr = num_curr + 1
+            if png_num_curr < 4:
+                min_border = 0
+                max_border = 5
+            elif png_num_curr > array_length-3:
+                min_border = array_length - 4
+                max_border = array_length
+            else:
+                min_border = png_num_curr - 2
+                max_border = png_num_curr + 2
+
+            try:
+                if num_curr == 0:
+                    page_prev = False
+                else:
+                    num_prev = num_curr - 1
+                    page_prev = next_id_loaded_items_array[num_prev]
+            except:
+                page_prev = False
+            try:
+                if num_curr == array_length-1:
+                    page_next = False
+                else:
+                    num_next = num_curr + 1
+                    page_next = next_id_loaded_items_array[num_next]
+            except:
+                page_next = False
+
             response = HttpResponse()
             load_template = 'items_loader/rre_load_template.html'
             items_html = render_to_string(
                 'items_loader/base_loader.html',
-                    {'items': queryset, 'load_template': load_template, 'remaining_count': remaining_count,
-                     'load_ids': load_ids, }
+                    {'items': queryset, 'load_template': load_template, 'current_ids': load_ids,
+                     'num_curr_page':num_curr_page, 'next_id_loaded_items':next_id_loaded_items_array,
+                     'curr_ids': load_ids_str, 'page_prev': page_prev, 'page_next':page_next,
+                     'min_border': min_border, 'max_border':max_border,}
             )
             response.content = items_html
             return response
+
+#class ItemsLoaderView(View): #старый - подгрузчик
+#    def post(self, request, *args, **kwargs):
+#        if not request.is_ajax():
+#            return HttpResponseRedirect('/')
+#        else:
+#            if 'load_ids' not in request.POST or 'm_name' not in request.POST or 'a_name' not in request.POST:
+#                return HttpResponseBadRequest()
+#
+#            load_ids = request.POST['load_ids']
+#            app_name = request.POST['a_name']
+#            model_name = request.POST['m_name']
+#            model = get_model(app_name, model_name)
+#
+#            load_ids_list = load_ids.split('|')
+#            block_id = load_ids_list[0]
+#            load_ids = load_ids.replace(block_id, '')
+#            block_id = block_id.split(',')
+#
+#            if load_ids.startswith(',') or load_ids.startswith('|'):
+#                load_ids = load_ids[1:]
+#            if load_ids.endswith(',') or load_ids.endswith('|'):
+#                load_ids = load_ids[:-1]
+#
+#            try:
+#                next_ids = load_ids_list[1].split(',')
+#            except:
+#                next_ids = False
+#
+#            if next_ids:
+#                remaining_count = len(next_ids)
+#            else:
+#                remaining_count = -1
+#
+#            try:
+#                queryset = model.objects.published().filter(id__in=block_id)
+#            except model.DoesNotExist:
+#                return HttpResponseBadRequest()
+#
+#            if 'price_sort' in request.POST:
+#                price_sort = request.POST['price_sort']
+#                if price_sort!='by_order':
+#                    if price_sort=='asc':
+#                        queryset = queryset.order_by('price')
+#                    elif price_sort=='desc':
+#                        queryset = queryset.order_by('-price')
+#                    else:
+#                        pass
+#
+#            response = HttpResponse()
+#            load_template = 'items_loader/rre_load_template.html'
+#            items_html = render_to_string(
+#                'items_loader/base_loader.html',
+#                    {'items': queryset, 'load_template': load_template, 'remaining_count': remaining_count,
+#                     'load_ids': load_ids, }
+#            )
+#            response.content = items_html
+#            return response
 
 items_loader = ItemsLoaderView.as_view()
