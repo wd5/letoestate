@@ -436,6 +436,7 @@ h3 {
 	border: 2px solid #c77113;
 }
 .item_img_zl_fr {
+	background: url('../img/none.png');
 	display: block;
 	position: absolute;
 	top: 0;
@@ -455,6 +456,7 @@ h3 {
 	overflow: hidden;
 }
 .item_img_zs_fr {
+	background: url('../img/none.png');
 	display: block;
 	position: absolute;
 	top: 0;
@@ -535,6 +537,7 @@ h1 span {
 	border: 2px solid #c77113;
 }
 .item_img_fr {
+	background: url('../img/none.png');
 	display: block;
 	position: absolute;
 	top: 0;
