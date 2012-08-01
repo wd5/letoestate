@@ -138,7 +138,7 @@ def file_path_partners_logo(instance, filename):
     return os.path.join('images','partnlogos',  translify(filename).replace(' ', '_') )
 
 class Partner(models.Model):
-    logo = ImageField(verbose_name=u'картинка', upload_to=file_path_partners_logo, blank=True)
+    logo = ImageField(verbose_name=u'картинка', upload_to=file_path_partners_logo, blank=True, editable=False)
     title = models.CharField(verbose_name=u'название', max_length=100)
     description = models.TextField(verbose_name=u'описание', blank=True)
     url = models.CharField(max_length=100, verbose_name=u'ссылка' #, help_text=u'Адрес страницы,например, "/your_address/"'
