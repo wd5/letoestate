@@ -44,19 +44,27 @@
 
 		<div class="contacts">
 			<div class="tel">{{ tel }}</div>
+            <div class="mail"><a href="mailto:{{ email }}">{{ email }}</a></div>
 		</div><!--/contacts-->
 
-		<div class="pic">
-            {% if header_slider %}
+        {% if request.path == '/' %}
+            <div class="pic_out">
                 {% for slide in header_slider %}
-                        <img src="{{ slide.get_image }}" class="slider_img" {% if not forloop.first %}style="display: none"{% endif %} alt="" />
+                <div class="pic slider_img">
+                    <img src="{{ slide.get_image }}" width="1000" height="300">
+                    <div class="pic_fr"></div>
+                    <div class="pic_text">
+                        <a href="{{ slide.url }}">{{ slide.title }}</a>
+                        <p>{{ slide.description }}</p>
+                    </div>
+                </div>
                 {% endfor %}
-            {% endif %}
-			<div class="pic_fr"></div>
-		</div><!-- /pic -->
+            </div><!-- /pic -->
+        {% endif %}
 
 		<div class="menu">
 			<ul>
+                <li{% if request.path == "/" %} class="current"{% endif %} ><a href="/">На главную</a></li>
                 {% block_menu request.path %}
 			</ul>
 		</div><!--/menu-->

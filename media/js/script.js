@@ -11,8 +11,6 @@ $(function () {
 	});
 	$('.specs ul').cycle({fx:'fade', ctrls:'.specs_ctrls span'});
 
-    SlideHeader();
-
     $('.fancybox').fancybox();
 
     $('#send_question').live('click',function(){
@@ -274,25 +272,28 @@ $(function () {
         return false;
     });*/
 
-});
+    SlideHeader();
 
-function SlideHeader()
-{
-    var delay = 3000, fade = 1000; // tweak-able
-    var banners = $('.slider_img');
-    var len = banners.length;
-    var i = 0;
-
-    setTimeout(cycle, delay); // <-- start
-
-    function cycle() {
-        $(banners[i%len]).fadeOut(fade, function() {
-            $(banners[++i%len]).fadeIn(fade, function() { // mod ftw
-                setTimeout(cycle, delay);
-            });
+    function SlideHeaderItem()
+    {
+        var banners = $('.slider_img');
+        banners.last().fadeOut(2000, function(){
+            $(this).prependTo('.pic_out').show()
         });
     }
-}
+
+    $('.slider_img').live('click',function(){
+        SlideHeaderItem();
+    });
+
+    var myTimer = 0
+
+    function SlideHeader(){
+       clearInterval(myTimer);
+       myTimer = setInterval( function(){SlideHeaderItem()} , 7000)
+       myTimer;
+    }
+});
 
 function SetPriceSlider(start, end, step, disabl)
 {

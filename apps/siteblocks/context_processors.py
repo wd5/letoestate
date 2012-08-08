@@ -8,6 +8,10 @@ def settings(request):
         contacts = Settings.objects.get(name='tel').value
     except Settings.DoesNotExist:
         contacts = False
+    try:
+        email = Settings.objects.get(name='workemail').value
+    except Settings.DoesNotExist:
+        email = False
 
     try:
         header_slider = HeaderSlideItem.objects.published()
@@ -16,6 +20,7 @@ def settings(request):
 
     return {
         'tel': contacts,
+        'email': email,
         'site_name': SITE_NAME,
         'header_slider': header_slider,
     }

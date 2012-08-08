@@ -66,7 +66,7 @@
             </div>
             <div class="item_ad">
                 {{ catalog_item.add_parameter_info|safe }}
-                <div class="item_ad_price">{{ catalog_item.get_str_price }} EUR</div>
+                <div class="item_ad_price">{{ catalog_item.get_str_price }}</div>
                 <div class="submit">
                     <div><a href="/countries/send_request/{% if item_type == 'residential' %}residential{% else %}commercial{% endif %}/{{ catalog_item.id }}/" class="fancybox">Оставить заявку</a></div>
                 </div>

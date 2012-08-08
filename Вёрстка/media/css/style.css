@@ -48,7 +48,7 @@ textarea {resize: none;}
 body {
 	background: #4f343b;
 	color: #000;
-	font: 14px/18px 'PT Sans', sans-serif;
+	font: 14px/18px Arial, sans-serif;
 }
 
 .wrapper {
@@ -61,19 +61,19 @@ body {
 
 
 
-a {color: #0e5998}
+a {color: #f68121}
 a:hover {color: #906}
 
 h1 {
-	font: bold 24px/30px 'PT Sans', sans-serif;
+	font: bold 24px/30px Tahoma, sans-serif;
 	margin: 0 0 18px 0;
 }
 h2 {
-	font: bold 20px/30px 'PT Sans', sans-serif;
+	font: bold 20px/30px Tahoma, sans-serif;
 	margin: 0 0 8px 0;
 }
 h3 {
-	font: bold 16px/18px 'PT Sans', sans-serif;
+	font: bold 16px/18px Tahoma, sans-serif;
 	margin: 0 0 12px 0;
 }
 
@@ -86,10 +86,10 @@ h3 {
 /*layout*/
 .header {
 	position: relative;
-	height: 113px;
 	width: 996px;
 	margin: 0 auto;
 	z-index: 1;
+	min-height: 146px;
 }
 /*layout*/
 
@@ -111,9 +111,10 @@ h3 {
 	width: 270px;
 	padding: 0 0 0 18px;
 	border-left: 1px solid #694b44;
-	color: #8c6c51;
+	color: #c8a466;
 	left: 230px;
 	top: 49px;
+	font-family: 'PT Sans', sans-serif;
 }
 .socs {
 	position: absolute;
@@ -128,46 +129,65 @@ h3 {
 	vertical-align: top;
 	margin: 0 0 0 13px;
 }
+
+.pic_out {
+	position: relative;
+	top: 146px;
+	height: 300px;
+	margin: 0 0 146px;
+}
 .pic {
 	position: absolute;
-	top: 108px;
-	left: 0;
+	top: 0;
+	left: -2px;
 }
 .pic_fr {
 	position: absolute;
-	top: -26px;
-	left: -39px;
-	height: 301px;
-	width: 1083px;
-	background: url(../img/pic_fr.png) 0 0 no-repeat;
+	top: 0;
+	left: 0;
+	height: 300px;
+	width: 100%;
+	background: url(../img/pic_fr.png) 0 0 repeat;
 }
-
+.pic_text {
+	position: absolute;
+	width: 400px;
+	bottom: 30px;
+	left: 18px;
+	padding: 18px;
+	background: url(../img/menu_bg.png) repeat;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 24px;
+}
+.pic_text a {
+	font-size: 24px;
+	color: #fff;
+}
 
 /*menu*/
 .menu {
 	position: absolute;
 	margin: 0 auto;
-	top: 284px;
-	left: 0px;
-	width: 996px;
-	text-align: center;
+	top: 100px;
+	left: 18px;
+	text-align: left;
+	width: 978px;
 }
 .menu li, .menu ul {
 	display: inline-block;
 	vertical-align: bottom;
 }
 .menu ul {
-	padding: 0 0 0 30px;
-	background: url(../img/menu_bg.png) 0 0 repeat;
-	border-radius: 4px;
 }
 .menu li {
-	margin: 0 30px 10px 0;
+	margin: 0 24px 10px 0;
 }
 .menu li a {
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
-	color: #fff;
+	color: #e7bf6e;
 }
 .menu li a:hover {
 	color: #c9c9c9;
@@ -191,12 +211,22 @@ h3 {
 	position: absolute;
 	top: 52px;
 	right: 6px;
-	padding: 0 0 0 58px;
-	font-size: 24px;
-	line-height: 39px;
+	padding: 5px 0 0 40px;
+	font-size: 18px;
 	font-weight: bold;
 	background: url(../img/tel.png) 0 0 no-repeat;
 	color: #c8a466;
+}
+.mail {
+	text-align: right;
+}
+.mail a {
+	color: #c8a466;
+	font-size: 14px;
+	font-weight: normal;
+}
+.mail a:hover {
+	color: #c9c9c9;
 }
 /*/contacts*/
 /*--------------HEADER-END--------------*/
@@ -209,7 +239,7 @@ h3 {
 .main {
 	position: relative;
 	background: url(../img/main_bg.gif) 50% 0 repeat-y;
-	padding: 268px 0 36px 0;
+	padding: 24px 0 36px 0;
 	border-radius: 8px 8px 0 0;
 	font-size: 0;
 	line-height: 0;
@@ -267,7 +297,7 @@ h3 {
 	vertical-align: top;
 	margin: 12px 0 0;
 	width: 70px;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
 }
 .sotr_about {
@@ -436,6 +466,7 @@ h3 {
 	border: 2px solid #c77113;
 }
 .item_img_zl_fr {
+	background: url('../img/none.png');
 	display: block;
 	position: absolute;
 	top: 0;
@@ -455,6 +486,7 @@ h3 {
 	overflow: hidden;
 }
 .item_img_zs_fr {
+	background: url('../img/none.png');
 	display: block;
 	position: absolute;
 	top: 0;
@@ -535,6 +567,7 @@ h1 span {
 	border: 2px solid #c77113;
 }
 .item_img_fr {
+	background: url('../img/none.png');
 	display: block;
 	position: absolute;
 	top: 0;
@@ -695,6 +728,46 @@ span.filter_curr a {
 /*/фильтры*/
 /*/catalog*/
 
+/*experts*/
+.expert {
+	font-size: 0;
+	line-height: 0;
+	letter-spacing: -1px;
+	margin: 0 0 36px;
+}
+.expert .img {
+	display: inline-block;
+	vertical-align: top;
+	width: 100px;
+}
+.expert .descr {
+	display: inline-block;
+	vertical-align: top;
+	width: 580px;
+	font-size: 14px;
+	line-height: normal;
+	letter-spacing: 0;
+}
+.expert .descr .name {
+	display: block;
+	font-size: 18px;
+	font-weight: bold;
+	margin: 0 0 10px;
+}
+.email, .phonenumber {
+	display: block;
+}
+.phonenumber {
+	font-size: 16px;
+}
+.email {
+	margin-bottom: 12px;
+}
+.partner {
+	margin: 0 0 36px;
+}
+/*/experts*/
+
 /*text-page*/
 .text p {margin-bottom:9px}
 .text ul, .text ol {margin:0 0 18px 36px}
@@ -703,17 +776,17 @@ span.filter_curr a {
 .text h2, .text h3 {margin: 24px 0 9px 0;}
 .text table {
 	margin-bottom:18px;
-	font-size:12px;
+	font-size:14px;
 	border-collapse: collapse;
 }
 .text tr, .text td, .text th {
-	border:1px solid #eee2ba;
+	border:1px solid #4f343b;
 	padding:4px 8px 4px 8px;
 }
 .text th {
 	font-weight: bold;
-	background-color:#f3e9cb;
-	color:#000;
+	background-color:#8e5915;
+	color:#fff;
 	text-align:center;
 }
 .img_left {
@@ -743,6 +816,7 @@ span.filter_curr a {
 	left: 0;
 	color: #99898d;
 	font-size: 12px;
+    width: 180px;
 }
 .footer_menu {
 	width: 600px;
@@ -785,7 +859,7 @@ span.filter_curr a {
 	color: #fff;
 }
 #madein {
-	font-size:12px;
+	font-size:11px;
 	font-style: italic;
 	line-height:14px;
 	text-decoration:none;
@@ -833,8 +907,8 @@ display:inline-block}
 
 /*faq*/
 .faq_author {
-	font-style: 12px;
-	margin: 0 0 10px;
+	font-size: 12px;
+	margin: 0 0 4px 0;
 }
 .faq_data {
 	display: inline-block;
@@ -844,7 +918,7 @@ display:inline-block}
 }
 .faq_author_name {
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 14px;
 }
 .question, .answer {
 	margin: 0 0 18px;
@@ -876,9 +950,15 @@ display:inline-block}
 	display: inline-block;
 	vertical-align: top;
 	font: 14px/18px 'PT Sans', sans-serif;
-	margin: 0 0 18px;
 	padding: 3px 8px;
 	border-radius: 3px;
+}
+.input, .textarea {
+	margin: 0 0 18px;
+}
+.errorlist {
+	text-align: right;
+	margin: 0 20px 0 0;
 }
 .input input, .textarea textarea {
 	border: 1px solid #a35400;
@@ -970,6 +1050,9 @@ display:inline-block}
 	padding: 15px 20px;
 	background: #fff;
 	width: 350px;
+}
+.form_faq .submit {
+	margin-left: 116px;
 }
 /*/form_search*/
 /*--------------FORMS_END------------------*/

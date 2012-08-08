@@ -48,7 +48,7 @@ textarea {resize: none;}
 body {
 	background: #4f343b;
 	color: #000;
-	font: 14px/18px 'PT Sans', sans-serif;
+	font: 14px/18px Arial, sans-serif;
 }
 
 .wrapper {
@@ -61,19 +61,19 @@ body {
 
 
 
-a {color: #0e5998}
+a {color: #f68121}
 a:hover {color: #906}
 
 h1 {
-	font: bold 24px/30px 'PT Sans', sans-serif;
+	font: bold 24px/30px Tahoma, sans-serif;
 	margin: 0 0 18px 0;
 }
 h2 {
-	font: bold 20px/30px 'PT Sans', sans-serif;
+	font: bold 20px/30px Tahoma, sans-serif;
 	margin: 0 0 8px 0;
 }
 h3 {
-	font: bold 16px/18px 'PT Sans', sans-serif;
+	font: bold 16px/18px Tahoma, sans-serif;
 	margin: 0 0 12px 0;
 }
 
@@ -86,10 +86,10 @@ h3 {
 /*layout*/
 .header {
 	position: relative;
-	height: 113px;
 	width: 996px;
 	margin: 0 auto;
 	z-index: 1;
+	min-height: 146px;
 }
 /*layout*/
 
@@ -114,6 +114,7 @@ h3 {
 	color: #c8a466;
 	left: 230px;
 	top: 49px;
+	font-family: 'PT Sans', sans-serif;
 }
 .socs {
 	position: absolute;
@@ -128,46 +129,65 @@ h3 {
 	vertical-align: top;
 	margin: 0 0 0 13px;
 }
+
+.pic_out {
+	position: relative;
+	top: 146px;
+	height: 300px;
+	margin: 0 0 146px;
+}
 .pic {
 	position: absolute;
-	top: 108px;
-	left: 0;
+	top: 0;
+	left: -2px;
 }
 .pic_fr {
 	position: absolute;
-	top: -26px;
-	left: -38px;
-	height: 301px;
-	width: 1083px;
-	background: url(../img/pic_fr.png) 0 0 no-repeat;
+	top: 0;
+	left: 0;
+	height: 300px;
+	width: 100%;
+	background: url(../img/pic_fr.png) 0 0 repeat;
 }
-
+.pic_text {
+	position: absolute;
+	width: 400px;
+	bottom: 30px;
+	left: 18px;
+	padding: 18px;
+	background: url(../img/menu_bg.png) repeat;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 24px;
+}
+.pic_text a {
+	font-size: 24px;
+	color: #fff;
+}
 
 /*menu*/
 .menu {
 	position: absolute;
 	margin: 0 auto;
-	top: 284px;
-	left: 0px;
-	width: 996px;
-	text-align: center;
+	top: 100px;
+	left: 18px;
+	text-align: left;
+	width: 978px;
 }
 .menu li, .menu ul {
 	display: inline-block;
 	vertical-align: bottom;
 }
 .menu ul {
-	padding: 0 0 0 30px;
-	background: url(../img/menu_bg.png) 0 0 repeat;
-	border-radius: 4px;
 }
 .menu li {
-	margin: 0 30px 10px 0;
+	margin: 0 24px 10px 0;
 }
 .menu li a {
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
-	color: #fff;
+	color: #e7bf6e;
 }
 .menu li a:hover {
 	color: #c9c9c9;
@@ -191,12 +211,22 @@ h3 {
 	position: absolute;
 	top: 52px;
 	right: 6px;
-	padding: 0 0 0 58px;
-	font-size: 24px;
-	line-height: 39px;
+	padding: 5px 0 0 40px;
+	font-size: 18px;
 	font-weight: bold;
 	background: url(../img/tel.png) 0 0 no-repeat;
 	color: #c8a466;
+}
+.mail {
+	text-align: right;
+}
+.mail a {
+	color: #c8a466;
+	font-size: 14px;
+	font-weight: normal;
+}
+.mail a:hover {
+	color: #c9c9c9;
 }
 /*/contacts*/
 /*--------------HEADER-END--------------*/
@@ -209,7 +239,7 @@ h3 {
 .main {
 	position: relative;
 	background: url(../img/main_bg.gif) 50% 0 repeat-y;
-	padding: 268px 0 36px 0;
+	padding: 24px 0 36px 0;
 	border-radius: 8px 8px 0 0;
 	font-size: 0;
 	line-height: 0;
@@ -236,6 +266,7 @@ h3 {
 .left {
 	width: 240px;
 	margin: 0 40px 0 0;
+	line-height: 18px;
 }
 .right {
 	width: 680px;
@@ -267,7 +298,7 @@ h3 {
 	vertical-align: top;
 	margin: 12px 0 0;
 	width: 70px;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
 }
 .sotr_about {
@@ -288,7 +319,7 @@ h3 {
 	color: #000;
 }
 .blk_menu {
-	font-size: 16px;
+	font-size: 14px;
 	margin: 18px 0 36px;
 }
 .blk_menu li {
@@ -309,16 +340,17 @@ h3 {
 .about_us {
 	position: relative;
 	margin: 0 0 18px;
-	padding: 40px 0 0;
+	padding: 25px 0 30px;
 	width: 688px;
 	left: -4px;
 	top: 0;
-	background: url(../img/about_us.png) 0 0 no-repeat;
+	border-top: 1px solid #dbdbdb;
+	border-bottom: 1px solid #dbdbdb;
 }
 .about_us_in {
-	width: 688px;
+	/*width: 688px;
 	padding: 0 0 52px;
-	background: url(../img/about_us_b.png) 0 100% no-repeat;
+	background: url(../img/about_us_b.png) 0 100% no-repeat;*/
 }
 .about_us_in p {
 	margin: 0 50px 12px;
@@ -337,6 +369,7 @@ h3 {
 }
 .main_text p {
 	margin: 0 0 18px;
+	line-height: 18px;
 }
 /*/about_us*/
 
@@ -384,6 +417,7 @@ h3 {
 	left: 13px;
 	background: url(../img/spec_ctrls.png) 0 0 repeat-y #fcdd05;
 	font-size: 20px;
+	line-height: 24px;
 	font-weight: bold;
 	color: #574c02;
 	padding: 0 10px 0 13px;
@@ -471,7 +505,7 @@ h3 {
 	vertical-align: top;
 	width: 360px;
 	font-size: 14px;
-	line-height: normal;
+	line-height: 18px;
 	letter-spacing: 0;
 	margin: 0 0 18px;
 }
@@ -552,7 +586,7 @@ h1 span {
 	vertical-align: top;
 	width: 480px;
 	font-size: 14px;
-	line-height: normal;
+	line-height: 18px;
 	letter-spacing: 0;
 	margin: 0 0 36px;
 }
@@ -715,7 +749,7 @@ span.filter_curr a {
 	vertical-align: top;
 	width: 580px;
 	font-size: 14px;
-	line-height: normal;
+	line-height: 18px;
 	letter-spacing: 0;
 }
 .expert .descr .name {
@@ -733,10 +767,18 @@ span.filter_curr a {
 .email {
 	margin-bottom: 12px;
 }
+.partner {
+	margin: 0 0 36px;
+	line-height: 18px;
+}
+.description p {
+	margin: 0 0 10px;
+}
 /*/experts*/
 
 /*text-page*/
-.text p {margin-bottom:9px}
+.text {line-height: 18px;}
+.text p, .text div {margin-bottom:9px;}
 .text ul, .text ol {margin:0 0 18px 36px}
 .text ul li {list-style:outside disc}
 .text ol li {list-style:outside decimal}
@@ -826,7 +868,7 @@ span.filter_curr a {
 	color: #fff;
 }
 #madein {
-	font-size:12px;
+	font-size:11px;
 	font-style: italic;
 	line-height:14px;
 	text-decoration:none;
@@ -886,12 +928,17 @@ display:inline-block}
 .faq_author_name {
 	font-weight: bold;
 	font-size: 14px;
+	line-height: 18px;
+}
+.question_text {
+	line-height: 18px;
 }
 .question, .answer {
 	margin: 0 0 18px;
 }
 .answer {
 	margin: 0 0 18px 40px;
+	line-height: 18px;
 }
 .faq {
 	margin: 0 0 36px;
@@ -902,6 +949,7 @@ display:inline-block}
 /*news*/
 .new {
 	margin: 0 0 36px;
+	line-height: 18px;
 }
 .new_date {
 	font-style: italic;

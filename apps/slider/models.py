@@ -49,6 +49,11 @@ def file_path_headerSlider(instance, filename):
 
 class HeaderSlideItem(models.Model):
     image = ImageField(verbose_name=u'картинка', upload_to=file_path_headerSlider)
+
+    title = models.CharField(verbose_name=u'название', max_length=100)
+    url = models.CharField(verbose_name = u'url', max_length = 255,)
+    description = models.CharField(verbose_name=u'описание', max_length = 255,)
+
     order = models.IntegerField(verbose_name=u'порядок сортировки',default=10)
     is_published = models.BooleanField(verbose_name = u'Опубликовано', default=True)
 
@@ -69,7 +74,8 @@ class HeaderSlideItem(models.Model):
         if os.path.isfile( settings.ROOT_PATH +file):
             return file
         else:
-            return get_thumbnail(self.image, '996x241', crop='center', quality=99).url
+            #return get_thumbnail(self.image, '996x241', crop='center', quality=99).url
+            return get_thumbnail(self.image, '1000x300', crop='center', quality=99).url
 
     def admin_photo_preview(self):
         image = self.image

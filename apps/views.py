@@ -43,7 +43,8 @@ index = IndexView.as_view()
 @csrf_exempt
 def slider_crop_image(request, id_image):
     next = request.REQUEST.get('next', None)
-    output_size = [996, 241]
+    #output_size = [996, 241]
+    output_size = [1000, 300]
     if request.method != "POST":
         try:
             image = HeaderSlideItem.objects.get(id=id_image).image

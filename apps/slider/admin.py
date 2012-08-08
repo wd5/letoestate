@@ -3,14 +3,14 @@ from django.contrib import admin
 
 from apps.slider.models import SlideItem, HeaderSlideItem
 from sorl.thumbnail.admin import AdminImageMixin
-from apps.utils.widgets import AdminImageCrop
+from apps.utils.widgets import AdminImageCrop, Redactor
 from apps.slider.models import HeaderSlideItem
 from django import forms
 
 class SliderImage(AdminImageCrop):
     app_and_model = 'slider/headerslideitem/'
-    img_width = 996
-    img_height = 241
+    img_width = 1000
+    img_height = 300
 
 
 class SlideItemAdmin(AdminImageMixin, admin.ModelAdmin):
@@ -24,6 +24,7 @@ admin.site.register(SlideItem, SlideItemAdmin)
 
 class SliderAdminForm(forms.ModelForm):
     image = forms.ImageField(widget=SliderImage, label=u'Изображение')
+    description = forms.CharField(widget=forms.Textarea(), label = u'Описание',)
     model = HeaderSlideItem
 
 class HeaderSlideItemAdmin(AdminImageMixin, admin.ModelAdmin):
