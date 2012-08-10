@@ -65,7 +65,7 @@ a {color: #f68121}
 a:hover {color: #906}
 
 h1 {
-	font: bold 24px/30px Tahoma, sans-serif;
+	font: bold 18px/24px Tahoma, sans-serif;
 	margin: 0 0 18px 0;
 }
 h2 {
@@ -118,6 +118,7 @@ h3 {
 }
 .socs {
 	position: absolute;
+	white-space: nowrap;
 	top: 18px;
 	right: 6px;
 	font-size: 0;
@@ -628,7 +629,7 @@ h1 span {
 	display: inline-block;
 	line-height: 14px;
 	margin-bottom: -2px;
-	border-bottom: 1px dashed #095992;
+	border-bottom: 1px dashed #f68121;
 	text-decoration: none;
 }
 .filter span a:hover {
@@ -705,7 +706,7 @@ span.filter_curr a {
 	font-weight: bold;
 	display: inline-block;
 	line-height: 14px;
-	border-bottom: 1px dotted #095992;
+	border-bottom: 1px dotted #f68121;
 	text-decoration: none;
 }
 .filter_show_more a:hover {
@@ -777,6 +778,12 @@ span.filter_curr a {
 /*/experts*/
 
 /*text-page*/
+.text_half {
+	width: 350px;
+}
+.text {
+	font-size: 13px;
+}
 .text {line-height: 18px;}
 .text p, .text div {margin-bottom:9px;}
 .text ul, .text ol {margin:0 0 18px 36px}

@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block main_right %}
-    <div class="text">
+    <div class="text{% if page.id == 4 %} text_half{% endif %} ">
         <h1>{{ page.title }}</h1>
         {{ page.content|safe }}
     </div>
